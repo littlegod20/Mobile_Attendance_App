@@ -1,3 +1,3 @@
-import Home from "../../../../screens/HomeScreen";
+import Home from "../../../../screens/studentScreens/HomeScreen";
 
 export default Home;

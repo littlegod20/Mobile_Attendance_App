@@ -1,4 +1,4 @@
 // /app/onboarding.tsx
-import OnboardingScreen from "../../screens/OnboardingScreen";
+import OnboardingScreen from "../../screens/shared/OnboardingScreen";
 
 export default OnboardingScreen;
