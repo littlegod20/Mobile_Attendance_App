@@ -1,3 +1,3 @@
-import LogIn from "../../../screens/LoginScreen";
+import LogIn from "../../../screens/studentScreens/LoginScreen";
 
 export default LogIn;

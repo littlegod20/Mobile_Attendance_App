@@ -1,3 +1,3 @@
-import Settings from "../../../screens/SettingsScreen";
+import Settings from "../../../screens/studentScreens/SettingsScreen";
 
 export default Settings;

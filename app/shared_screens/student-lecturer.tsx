@@ -1,3 +1,3 @@
-import StudentLecturerScreen from "../../screens/Student-LecturerScreen";
+import StudentLecturerScreen from "../../screens/shared/Student-LecturerScreen";
 
 export default StudentLecturerScreen;
