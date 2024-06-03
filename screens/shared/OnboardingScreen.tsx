@@ -1,4 +1,5 @@
 // app/OnboardingScreen.tsx
+
 import React, { useState, useRef } from "react";
 import { Link } from "expo-router";
 import {
@@ -24,10 +25,12 @@ const OnboardingScreen = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList<OnboardingScreenItem>>(null);
 
+
   const completeOnboarding = async () => {
     await AsyncStorage.setItem("onboardingCompleted", "true");
     router.replace("./student-lecturer");
   };
+
 
   const onViewableItemsChanged = ({
     viewableItems,
@@ -91,6 +94,7 @@ const OnboardingScreen = () => {
         </Link>
       </Text>
     </GestureHandlerRootView>
+
   );
 };
 
@@ -129,6 +133,7 @@ const styles = StyleSheet.create({
   },
   inactiveIndicator: {
     backgroundColor: "gray",
+
   },
 });
 

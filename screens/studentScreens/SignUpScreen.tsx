@@ -1,3 +1,4 @@
+
 import { View, Text, ImageBackground, TextInput } from "react-native";
 import React from "react";
 import { Link } from "expo-router";
@@ -41,6 +42,7 @@ const SignUp = () => {
         />
       </ImageBackground>
     </ThemedView>
+
   );
 };
 

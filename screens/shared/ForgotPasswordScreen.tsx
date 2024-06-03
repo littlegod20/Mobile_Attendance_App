@@ -34,11 +34,14 @@ const ForgotPasswordScreen = () => {
         />
       </ImageBackground>
     </ThemedView>
+
   );
 };
 
 export default ForgotPasswordScreen;
 
+
 {
   /* <Link href="./otp">OTP Screen</Link> */
 }
+

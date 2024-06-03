@@ -39,10 +39,12 @@ const LogIn = () => {
         />
       </ImageBackground>
     </ThemedView>
+
   );
 };
 
 export default LogIn;
+
 
 {
   /* <Link href="/shared_screens/forgot_password">Forgot Password?</Link> */
