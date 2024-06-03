@@ -11,7 +11,9 @@ export type ThemedTextProps = TextProps & {
     | "subtitle"
     | "link"
     | "smalldefault"
-    | "smallbold";
+    | "smallbold"
+    | "mediumRegular"
+    | "mediumSemi";
 };
 
 export function ThemedText({
@@ -34,6 +36,8 @@ export function ThemedText({
         type === "smalldefault" ? styles.smalldefault : undefined,
         type === "smallbold" ? styles.smallbold : undefined,
         type === "defaultSemiBold" ? styles.defaultSemiBold : undefined,
+        type === "mediumSemi" ? styles.mediumSemi : undefined,
+        type === "mediumRegular" ? styles.mediumRegular : undefined,
         style,
       ]}
       {...rest}
@@ -48,9 +52,8 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   defaultSemiBold: {
-    fontSize: 15,
+    fontSize: 16,
     lineHeight: 24,
-    // fontWeight: "600",
     fontFamily: "Montserrat-SemiBold",
   },
   title: {
@@ -67,6 +70,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#0a7ea4",
     fontFamily: "Montserrat-SemiBold",
+  },
+  mediumRegular: {
+    fontSize: 14,
+    fontFamily: "Montserrat-Regular",
+  },
+  mediumSemi: {
+    fontSize: 14,
+    fontFamily: "Montserrat-Regular",
   },
   smalldefault: {
     fontSize: 12,

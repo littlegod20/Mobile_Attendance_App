@@ -1,6 +1,5 @@
 import { View, Text, ImageBackground } from "react-native";
 import React from "react";
-import { Link } from "expo-router";
 import { ThemedView } from "../../contexts/ThemedView";
 import { ThemedText } from "../../contexts/ThemedText";
 import CustomForm from "../../components/Form";
@@ -43,7 +42,3 @@ const LogIn = () => {
 };
 
 export default LogIn;
-
-{
-  /* <Link href="/shared_screens/forgot_password">Forgot Password?</Link> */
-}

@@ -38,7 +38,3 @@ const ForgotPasswordScreen = () => {
 };
 
 export default ForgotPasswordScreen;
-
-{
-  /* <Link href="./otp">OTP Screen</Link> */
-}
