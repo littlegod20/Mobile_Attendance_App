@@ -1,12 +1,10 @@
 import { TextInput, TextInputProps, View } from "react-native";
-import { ThemedText } from "../contexts/ThemedText";
 import { useThemeColor } from "../hooks/useThemeColor";
 
 export type CustomInputProps = TextInputProps & {
   placeholder?: string;
   lightColor?: string;
   darkColor?: string;
-  //   title?: string;
 };
 
 const CustomInput = ({
@@ -14,7 +12,6 @@ const CustomInput = ({
   placeholder,
   lightColor,
   darkColor,
-  //   title,
   ...rest
 }: CustomInputProps) => {
   const borderColor = useThemeColor(

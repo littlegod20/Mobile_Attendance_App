@@ -1,6 +1,5 @@
 import { View, Text, ImageBackground } from "react-native";
 import React from "react";
-import { Link } from "expo-router";
 import { ThemedView } from "../../contexts/ThemedView";
 import { ThemedText } from "../../contexts/ThemedText";
 import CustomForm from "../../components/Form";
@@ -34,14 +33,7 @@ const ForgotPasswordScreen = () => {
         />
       </ImageBackground>
     </ThemedView>
-
   );
 };
 
 export default ForgotPasswordScreen;
-
-
-{
-  /* <Link href="./otp">OTP Screen</Link> */
-}
-

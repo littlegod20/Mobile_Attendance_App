@@ -6,7 +6,6 @@ import { ThemedText } from "../contexts/ThemedText";
 type ButtonComponentProps = {
   title: string;
   onPress: any;
-  // path: string | null;
 };
 
 const Button = ({ title, onPress, ...rest }: ButtonComponentProps) => {
@@ -20,7 +19,9 @@ const Button = ({ title, onPress, ...rest }: ButtonComponentProps) => {
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 12,
+        // width: "100%",
       }}
+      {...rest}
     >
       <ThemedText type="subtitle">{title}</ThemedText>
     </TouchableOpacity>
