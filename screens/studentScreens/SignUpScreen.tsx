@@ -1,3 +1,4 @@
+
 import { View, Text, ImageBackground, TextInput } from "react-native";
 import React from "react";
 import { ThemedView } from "../../contexts/ThemedView";
@@ -40,6 +41,7 @@ const SignUp = () => {
         />
       </ImageBackground>
     </ThemedView>
+
   );
 };
 
