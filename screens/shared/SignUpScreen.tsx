@@ -1,4 +1,3 @@
-
 import { View, Text, ImageBackground, TextInput } from "react-native";
 import React from "react";
 import { ThemedView } from "../../contexts/ThemedView";
@@ -7,7 +6,7 @@ import CustomForm from "../../components/Form";
 
 const SignUp = () => {
   const inputConfigs = [
-    { name: "Name", placeholder: "Enter your name" },
+    { name: "Name", placeholder: "Surname Firstname" },
     { name: "Email", placeholder: "Enter your email" },
     { name: "Password", placeholder: "Enter your password" },
     { name: "ID", placeholder: "Enter your school id number" },
@@ -34,14 +33,13 @@ const SignUp = () => {
           inputs={inputConfigs}
           onSubmit={handleFormSubmit}
           buttonTitle="Sign Up"
-          path={"./log_in"}
+          path={"./student-lecturer"}
           message="Already have an account?"
           link_name="Log in"
           link_path="./log_in"
         />
       </ImageBackground>
     </ThemedView>
-
   );
 };
 

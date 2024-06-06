@@ -41,14 +41,18 @@ export const Colors = {
     tabIconDefault: "#fff",
     tabIconSelected: tintColorLight,
     inputBorder: "#FF7A00",
+    button: "#DC924D",
+    buttonText: "#ffff",
   },
   dark: {
-    text: "#ECEDEE",
-    background: "#151718",
+    text: "#000",
+    background: "transparent",
     tint: tintColorLight,
     // icon: '#'
     tabIconDefault: "#fff",
-    tabIconSelected: tintColorDark,
-    inputBorder: "#ffffff",
+    tabIconSelected: tintColorLight,
+    inputBorder: "#FF7A00",
+    button: "#DC924D",
+    buttonText: "#ffff",
   },
 };

@@ -4,19 +4,29 @@
     "slug": "attendance_checking",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/splash_icon.png",
+    "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash_screen_bg.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "splash": {
+        "image": "./assets/images/splash.png",
+        "resizeMode": "cover",
+        "backgroundColor": "#ffffff"
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/splash_screen_bg.png",
+        "foregroundImage": "./assets/images/splash.png",
+        "backgroundColor": "#ffffff"
+      },
+      "splash": {
+        "image": "./assets/images/splash.png",
+        "resizeMode": "cover",
         "backgroundColor": "#ffffff"
       }
     },

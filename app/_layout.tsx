@@ -9,7 +9,7 @@ import * as SplashScreen from "expo-splash-screen";
 // Prevent the splash screen from auto hiding
 SplashScreen.preventAutoHideAsync();
 
-const Layout = () => {
+const RootLayout = () => {
   const [isOnboardingCompleted, setIsOnboardingCompleted] = useState(false);
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
@@ -52,4 +52,4 @@ const Layout = () => {
   return <Slot />;
 };
 
-export default Layout;
+export default RootLayout;

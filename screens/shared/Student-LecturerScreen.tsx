@@ -26,21 +26,20 @@ const StudentLecturerScreen = () => {
       >
         <ThemedText
           type="subtitle"
-          className="bg-[#FFC107] p-5 rounded-lg  mb-4"
+          className="bg-coffee_light p-5  rounded-lg  mb-4"
         >
-          <Link href="/student/registration" className="text-black">
-            Go to Student SignUp
+          <Link href="./log_in" className="text-white">
+            I'm a Student
           </Link>
         </ThemedText>
 
-        <ThemedText type="subtitle" className="bg-[#FFC107] p-5 rounded-lg">
-          <Link href="/lecturer" className="text-black">
-            Go to Lecturer SignUp
+        <ThemedText type="subtitle" className="bg-coffee_light  p-5 rounded-lg">
+          <Link href="./log_in" className="text-white">
+            I'm a Lecturer
           </Link>
         </ThemedText>
       </ImageBackground>
     </ThemedView>
-
   );
 };
 
