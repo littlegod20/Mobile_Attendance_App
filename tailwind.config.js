@@ -8,7 +8,13 @@ module.exports = {
   ],
   presets: [require("nativewind/preset")],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        coffee: "#A66d37",
+        coffee_light: "#DC924D",
+      },
+    },
   },
+
   plugins: [],
 };

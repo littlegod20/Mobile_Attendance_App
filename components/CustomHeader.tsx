@@ -1,26 +1,31 @@
 import React from "react";
 import { View, Image, TouchableOpacity } from "react-native";
-import { DrawerNavigationProp } from "@react-navigation/drawer";
 import { DrawerActions } from "@react-navigation/native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useNavigation } from "expo-router";
 
 type CustomHeaderProps = {
-  navigation: DrawerNavigationProp<any>;
+  navigation: any;
 };
 
-const CustomHeader: React.FC<CustomHeaderProps> = ({ navigation }) => {
+const CustomHeader: React.FC<CustomHeaderProps> = () => {
+  const navigation = useNavigation();
   return (
     <View
       style={{
         flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#FFC107",
+        alignItems: "flex-end",
         height: 100,
+        position: "relative",
       }}
     >
+      <Image
+        source={require("../assets/images/header_bg.png")}
+        className="absolute inset-0 object-cover w-full h-full"
+      />
       <TouchableOpacity
         onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-        style={{ marginLeft: 10, marginTop: 15, padding: 10 }}
+        style={{ marginLeft: 25, marginTop: 15, padding: 10 }}
       >
         <FontAwesome size={20} name="bars" />
       </TouchableOpacity>

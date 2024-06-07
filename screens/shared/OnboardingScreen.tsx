@@ -1,5 +1,3 @@
-// app/OnboardingScreen.tsx
-
 import React, { useState, useRef } from "react";
 import { Link } from "expo-router";
 import {
@@ -9,6 +7,7 @@ import {
   Image,
   FlatList,
   ViewToken,
+  Dimensions,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
@@ -18,19 +17,18 @@ import {
 } from "../../utils/constants";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Button from "../../components/Button";
-// import { Button } from "react-native";
+
+const { width } = Dimensions.get("window");
 
 const OnboardingScreen = () => {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList<OnboardingScreenItem>>(null);
 
-
   const completeOnboarding = async () => {
     await AsyncStorage.setItem("onboardingCompleted", "true");
-    router.replace("./student-lecturer");
+    router.replace("./sign_up");
   };
-
 
   const onViewableItemsChanged = ({
     viewableItems,
@@ -51,12 +49,10 @@ const OnboardingScreen = () => {
       <FlatList
         data={ONBOARDING_SCREENS}
         renderItem={({ item }) => (
-          <View className="flex items-center w-[300px] justify-end  mx-3 ">
+          <View style={styles.itemContainer}>
             <Image source={item.img} style={styles.image} />
-            <View className="mt-8 mb-6 flex flex-col justify-center items-center">
-              <Text className="text-xl mb-3 font-[Montserrat-Bold]">
-                {item.title}
-              </Text>
+            <View style={styles.textContainer}>
+              <Text style={styles.title}>{item.title}</Text>
               <Text style={styles.description}>{item.description}</Text>
             </View>
           </View>
@@ -83,32 +79,49 @@ const OnboardingScreen = () => {
         ))}
       </View>
 
-      <Button title="Get Started" onPress={completeOnboarding} />
-      <Text className="text-center text-base my-4 font-[Montserrat-Regular]">
+      <View className="p-5">
+        <Button title="Get Started" onPress={completeOnboarding} />
+      </View>
+
+      <Text style={styles.footerText}>
         Already have an account?{" "}
-        <Link
-          href="/student/registration/log_in"
-          className="text-[#FF7A00] font-[Montserrat-Bold]"
-        >
+        <Link href="/student/registration/log_in" style={styles.loginLink}>
           Login
         </Link>
       </Text>
     </GestureHandlerRootView>
-
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 18,
+    // padding: 18,
   },
-
+  itemContainer: {
+    width, // full width of the screen
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    padding: 15,
+    marginTop: 60,
+  },
   image: {
-    width: 300,
-    height: "30%",
+    width, // full width of the screen
+    height: Dimensions.get("window").height * 0.3,
+    resizeMode: "cover",
     marginBottom: 20,
-    objectFit: "cover",
+  },
+  textContainer: {
+    alignItems: "center",
+    // marginTop: 8,
+    // marginBottom: 6,
+    // backgroundColor: "yellow",
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 3,
+    fontFamily: "Montserrat-Bold",
+    textAlign: "center",
   },
   description: {
     fontSize: 16,
@@ -133,7 +146,16 @@ const styles = StyleSheet.create({
   },
   inactiveIndicator: {
     backgroundColor: "gray",
-
+  },
+  footerText: {
+    textAlign: "center",
+    fontSize: 16,
+    marginVertical: 16,
+    fontFamily: "Montserrat-Regular",
+  },
+  loginLink: {
+    color: "#FF7A00",
+    fontFamily: "Montserrat-Bold",
   },
 });
 

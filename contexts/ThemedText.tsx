@@ -14,6 +14,8 @@ export type ThemedTextProps = TextProps & {
     | "smallbold"
     | "mediumRegular"
     | "mediumSemi";
+
+  customStyle?: object;
 };
 
 export function ThemedText({
@@ -21,6 +23,7 @@ export function ThemedText({
   lightColor,
   darkColor,
   type = "default",
+  customStyle,
   ...rest
 }: ThemedTextProps) {
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
@@ -39,6 +42,7 @@ export function ThemedText({
         type === "mediumSemi" ? styles.mediumSemi : undefined,
         type === "mediumRegular" ? styles.mediumRegular : undefined,
         style,
+        customStyle,
       ]}
       {...rest}
     />
@@ -77,7 +81,7 @@ const styles = StyleSheet.create({
   },
   mediumSemi: {
     fontSize: 14,
-    fontFamily: "Montserrat-Regular",
+    fontFamily: "Montserrat-SemiBold",
   },
   smalldefault: {
     fontSize: 12,

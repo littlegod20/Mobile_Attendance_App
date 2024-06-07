@@ -12,10 +12,7 @@ export default function Layout() {
           options={{
             drawerLabel: "Home",
             title: "",
-            headerStyle: {
-              backgroundColor: "transparent",
-              shadowColor: "transparent",
-            },
+            headerShown: false,
           }}
         />
         <Drawer.Screen
@@ -31,7 +28,7 @@ export default function Layout() {
           options={{
             drawerLabel: "Settings",
             title: "",
-            header: (props) => <CustomHeader {...props} />,
+            headerShown: false,
           }}
         />
       </Drawer>
