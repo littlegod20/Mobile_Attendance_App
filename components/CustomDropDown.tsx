@@ -10,9 +10,15 @@ interface Option {
 
 interface CustomDropDownProps {
   options: Option[];
+  options_type: string;
+  customStyles?: object;
 }
 
-const CustomDropDown: React.FC<CustomDropDownProps> = ({ options }) => {
+const CustomDropDown: React.FC<CustomDropDownProps> = ({
+  options,
+  options_type,
+  customStyles,
+}) => {
   const [showOptions, setShowOptions] = useState(false);
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
 
@@ -27,9 +33,28 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({ options }) => {
 
   return (
     <View>
-      <TouchableOpacity onPress={toggleOptions} style={styles.dropdown}>
+      <TouchableOpacity
+        onPress={toggleOptions}
+        style={[
+          {
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "row",
+            padding: 15,
+            borderRadius: 5,
+            backgroundColor: "#DC924D",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 7 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          },
+          customStyles,
+        ]}
+      >
         <ThemedText type="subtitle" style={styles.dropdownText}>
-          {selectedOption ? selectedOption.label : "Select an option"}
+          {selectedOption ? selectedOption.label : `Select ${options_type}`}
         </ThemedText>
         <AntDesign name="caretdown" size={20} color="white" />
       </TouchableOpacity>
@@ -58,20 +83,6 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({ options }) => {
 };
 
 const styles = StyleSheet.create({
-  dropdown: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    padding: 15,
-    borderRadius: 5,
-    backgroundColor: "#DC924D",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 7 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
   dropdownText: {
     fontSize: 16,
     color: "white",

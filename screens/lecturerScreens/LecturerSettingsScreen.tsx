@@ -3,7 +3,7 @@ import { ThemedView } from "../../contexts/ThemedView";
 import { ThemedText } from "../../contexts/ThemedText";
 import GoBackBtn from "../../components/GoBackBtn";
 
-export default function Settings() {
+export default function LecturerSettings() {
   return (
     <ThemedView className="flex-1">
       <ImageBackground

@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { ThemedText } from "../contexts/ThemedText";
+import { useRouter } from "expo-router";
 
 export type CheckAttendanceCardProps = {
   course: string;
@@ -8,8 +9,11 @@ export type CheckAttendanceCardProps = {
 };
 
 const CheckAttendanceCard = ({ course, open }: CheckAttendanceCardProps) => {
+  const router = useRouter();
   return (
-    <TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => (open ? router.navigate("student/Main/settings") : null)}
+    >
       <View className="w-full flex mb-4 flex-row gap-3">
         <View
           className={`w-[65%] bg-coffee flex h-28 ${
@@ -20,13 +24,17 @@ const CheckAttendanceCard = ({ course, open }: CheckAttendanceCardProps) => {
             {course}
           </ThemedText>
         </View>
+
         <View
           className={`flex-1 ${
             open ? "" : "opacity-50"
           } bg-coffee flex items-center justify-center rounded-lg`}
         >
           <ThemedText className="text-center flex" style={{ color: "white" }}>
-            Session <Text>{open ? "Opened" : "Closed"}</Text>
+            Session
+          </ThemedText>
+          <ThemedText style={{ color: "white" }}>
+            {open ? "Opened" : "Closed"}
           </ThemedText>
         </View>
       </View>
