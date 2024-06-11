@@ -7,6 +7,8 @@ import {
   Modal,
   PanResponder,
   ImageBackground,
+  Alert,
+  StatusBar,
 } from "react-native";
 import { Avatar } from "react-native-paper";
 import { ThemedText } from "../../contexts/ThemedText";
@@ -107,11 +109,38 @@ const cards: CardData[] = [
   },
 ];
 
-export default function Home() {
+export default function LecuturerHome() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [sessionOpened, setSessionOpened] = useState(false); // initial session button is open since sessionOpen is false
+  const course_name = "Applied Electricity";
 
   const handleCheckAttendance = () => {
-    router.navigate("/student/check_attendance");
+    // router.navigate("/lecturer/");
+    Alert.alert(
+      `${sessionOpened ? "Close" : "Opened"} Session`,
+      `Are you sure you want to ${
+        sessionOpened ? "close" : "open"
+      } session for ${course_name}`,
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            if (sessionOpened) {
+              setSessionOpened(false);
+            } else {
+              setSessionOpened(true);
+            }
+            console.log("OK Pressed");
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   const toggleMenu = () => {
@@ -130,7 +159,9 @@ export default function Home() {
           <ThemedText type="subtitle" style={{ fontSize: 25 }}>
             Hello
           </ThemedText>
-          <ThemedText type="default">AKWASI NTIM</ThemedText>
+          <ThemedText type="default" className="uppercase">
+            Lecturer
+          </ThemedText>
         </View>
       </View>
 
@@ -142,17 +173,32 @@ export default function Home() {
 
       <View className="mt-6 w-full px-3 flex justify-start items-center h-[80px]">
         <View className="border-b-2 border-b-gray-400 w-full flex justify-between h-full items-center">
-          <Button
-            title="Check Attendance"
-            onPress={handleCheckAttendance}
-            customStyle={{ width: "90%" }}
-          />
+          {sessionOpened ? (
+            <Button
+              title="Close Session"
+              onPress={handleCheckAttendance}
+              customStyle={{
+                width: "90%",
+                backgroundColor: "#A66D37",
+                // opacity: 0.7,
+              }}
+            />
+          ) : (
+            <Button
+              title="Open Session"
+              onPress={handleCheckAttendance}
+              customStyle={{
+                width: "90%",
+                backgroundColor: "#DC924D",
+              }}
+            />
+          )}
         </View>
       </View>
 
       <View className="relative flex justify-start items-start w-11/12 mt-5">
         <ThemedText type="subtitle" customStyle={{ marginBottom: 15 }}>
-          Recents
+          Recent Lectures
         </ThemedText>
 
         <View className="relative h-1/2">

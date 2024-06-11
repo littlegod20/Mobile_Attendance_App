@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  ImageBackground,
-  ScrollView,
-  Dimensions,
-  Animated,
-} from "react-native";
+import { View, Text, ScrollView, Dimensions, Animated } from "react-native";
 import { ThemedView } from "../../contexts/ThemedView";
 import GoBackBtn from "../../components/GoBackBtn";
 import { ThemedText } from "../../contexts/ThemedText";
@@ -39,7 +32,7 @@ const inputConfigs = [
 
 const { width } = Dimensions.get("window");
 
-export default function Profile() {
+export default function LecturerProfile() {
   const scrollViewRef = useRef<ScrollView>(null);
   const [activeTab, setActiveTab] = useState(1);
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -68,11 +61,11 @@ export default function Profile() {
         />
         <View className="flex  ml-3">
           <ThemedText type="defaultSemiBold" className="uppercase">
-            <Text>Amaame</Text>
+            Lecturer surname
           </ThemedText>
 
           <ThemedText type="mediumRegular" className="uppercase">
-            Isaac Junior Litty
+            First & other names
           </ThemedText>
         </View>
       </View>
@@ -92,7 +85,7 @@ export default function Profile() {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
-          width: width * tabs.length,
+          width: width * 3,
         }}
         className="flex-1"
         onScroll={Animated.event(
@@ -101,24 +94,18 @@ export default function Profile() {
         )}
         scrollEventThrottle={16}
       >
-        <View style={{ width: width }}>
-          {/* Contact Section */}
-          <DetailForm
-            name="Kwaku Amaame Osei"
-            email="kwakua023@gmail.com"
-            password="****"
-          />
-        </View>
-
-        <View style={{ width: width }}>
-          <DetailForm
-            studentId={302230}
-            indexNo={4032344}
-            programme="Bsc. Telecommunication Eng."
-            year="Three (3)"
-          />
-        </View>
-
+        {/* Contact Section */}
+        <DetailForm
+          name="Lecturer Name"
+          email="lecturer@gmail.com"
+          password="****"
+        />
+        {/* Programme section */}
+        <DetailForm
+          serialNo={2395959}
+          programme="Bsc. Telecommunication Eng."
+        />
+        {/* Edit info section */}
         <View style={{ width: width }}>
           <CustomForm
             inputs={inputConfigs}

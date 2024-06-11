@@ -1,11 +1,14 @@
-import { ImageBackground } from "react-native";
+import { ImageBackground, TouchableOpacity, View } from "react-native";
 import React from "react";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import { Appearance, useColorScheme } from "react-native";
 import { getThemedStyles } from "../../themes/themedStyles";
 import { darkTheme, lightTheme } from "../../themes/themes";
 import { ThemedView } from "../../contexts/ThemedView";
 import { ThemedText } from "../../contexts/ThemedText";
+import { FontAwesome6 } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { StyleSheet } from "react-native";
 
 const StudentLecturerScreen = () => {
   // let colorScheme = useColorScheme();
@@ -17,6 +20,8 @@ const StudentLecturerScreen = () => {
   //   themedStyles = getThemedStyles(lightTheme);
   // }
 
+  const router = useRouter();
+
   return (
     <ThemedView className="flex-1">
       <ImageBackground
@@ -24,23 +29,49 @@ const StudentLecturerScreen = () => {
         className="flex-1 justify-center items-center "
         // style={themedStyles?.container}
       >
-        <ThemedText
-          type="subtitle"
-          className="bg-coffee_light p-5  rounded-lg  mb-4"
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={() => router.navigate({ pathname: "student/faculty_dept" })}
         >
-          <Link href="./log_in" className="text-white">
+          <FontAwesome6 name="user-graduate" size={24} color="white" />
+          <ThemedText
+            type="subtitle"
+            className="ml-3"
+            style={{ color: "white" }}
+          >
             I'm a Student
-          </Link>
-        </ThemedText>
+          </ThemedText>
+        </TouchableOpacity>
 
-        <ThemedText type="subtitle" className="bg-coffee_light  p-5 rounded-lg">
-          <Link href="./log_in" className="text-white">
+        <TouchableOpacity
+          style={styles.buttonContainer}
+          onPress={() => router.navigate({ pathname: "lecturer/faculty_dept" })}
+        >
+          <FontAwesome5 name="chalkboard-teacher" size={24} color="white" />
+          <ThemedText
+            type="subtitle"
+            className="ml-3"
+            style={{ color: "white" }}
+          >
             I'm a Lecturer
-          </Link>
-        </ThemedText>
+          </ThemedText>
+        </TouchableOpacity>
       </ImageBackground>
     </ThemedView>
   );
 };
+
+const styles = StyleSheet.create({
+  buttonContainer: {
+    backgroundColor: "#DC924D",
+    display: "flex",
+    flexDirection: "row",
+    padding: 22,
+    marginBottom: 35,
+    width: 250,
+    justifyContent: "center",
+    borderRadius: 6,
+  },
+});
 
 export default StudentLecturerScreen;

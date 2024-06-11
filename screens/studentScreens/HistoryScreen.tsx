@@ -83,7 +83,7 @@ export default function History() {
       >
         <View className="h-[15%] flex justify-center mt-10">
           {/* <GoBackBtn path="./index" /> */}
-          <CustomDropDown options={options} />
+          <CustomDropDown options={options} options_type="options" />
         </View>
 
         <View className="p-3"></View>

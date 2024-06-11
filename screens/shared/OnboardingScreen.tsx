@@ -27,7 +27,7 @@ const OnboardingScreen = () => {
 
   const completeOnboarding = async () => {
     await AsyncStorage.setItem("onboardingCompleted", "true");
-    router.replace("./sign_up");
+    router.replace("shared_screens/sign_up");
   };
 
   const onViewableItemsChanged = ({
@@ -85,7 +85,7 @@ const OnboardingScreen = () => {
 
       <Text style={styles.footerText}>
         Already have an account?{" "}
-        <Link href="/student/registration/log_in" style={styles.loginLink}>
+        <Link href="shared_screens/log_in" style={styles.loginLink}>
           Login
         </Link>
       </Text>

@@ -9,12 +9,13 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo-google-fonts/montserrat": "^0.2.3",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-navigation/bottom-tabs": "^6.5.20",
     "@react-navigation/drawer": "^6.6.15",
     "expo": "~51.0.9",
     "expo-constants": "~16.0.2",
-    "expo-font": "~12.0.6",
+    "expo-font": "~12.0.7",
     "expo-linking": "~6.3.1",
     "expo-router": "~3.5.14",
     "expo-splash-screen": "^0.27.4",
@@ -23,7 +24,7 @@
     "nativewind": "4.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "0.74.1",
+    "react-native": "^0.74.2",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-paper": "^5.12.3",

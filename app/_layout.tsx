@@ -45,11 +45,15 @@ const RootLayout = () => {
 
   useEffect(() => {
     if (fontsLoaded && !isOnboardingCompleted) {
-      router.replace("/shared_screens");
+      router.replace("/");
     }
   }, [fontsLoaded, isOnboardingCompleted]);
 
-  return <Slot />;
+  return (
+    <React.StrictMode>
+      <Slot />
+    </React.StrictMode>
+  );
 };
 
 export default RootLayout;
