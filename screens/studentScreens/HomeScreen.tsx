@@ -1,11 +1,9 @@
 import {
   View,
-  Text,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
   Modal,
-  PanResponder,
   ImageBackground,
 } from "react-native";
 import { Avatar } from "react-native-paper";
@@ -17,98 +15,37 @@ import { ThemedView } from "../../contexts/ThemedView";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import RecentCard from "../../components/RecentsCard";
 import { FlatList } from "react-native";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import TimeTableCourse from "../../components/TimeTableCourse";
 import { TouchableWithoutFeedback } from "react-native";
+import { courses, cards } from "../../data";
+import CarouselCardItem from "../../components/AttendanceProgress";
+import { API_URL } from "@env";
 
-interface CourseData {
+type Course = {
   course_name: string;
   course_code: string;
   start_time: string;
   finish_time: string;
-}
-
-const courses: CourseData[] = [
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-];
-
-interface CardData {
-  week: string;
-  course: string;
-  date: string;
-  present: boolean;
-}
-
-const cards: CardData[] = [
-  {
-    week: "Week 1",
-    course: "Basic Mechanics",
-    date: "June 11",
-    present: true,
-  },
-  {
-    week: "Week 2",
-    course: "Applied Electricity",
-    date: "June 11",
-    present: false,
-  },
-  {
-    week: "Week 3",
-    course: "EMC",
-    date: "June 11",
-    present: true,
-  },
-  {
-    week: "Week 4",
-    course: "Linear Electronics",
-    date: "June 11",
-    present: false,
-  },
-];
+};
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [coursesData, setCoursesData] = useState<Course[]>([]);
+
+  useEffect(() => {
+    fetchCoursesData();
+  }, []);
+
+  const fetchCoursesData = async () => {
+    try {
+      const response = await fetch(`${API_URL}/courses`);
+      const data = await response.json();
+      setCoursesData(data);
+    } catch (error) {
+      console.error("Error fetching courses data:", error);
+    }
+  };
 
   const handleCheckAttendance = () => {
     router.navigate("/student/check_attendance");
@@ -134,13 +71,11 @@ export default function Home() {
         </View>
       </View>
 
-      <View className="mt-10 h-[20%] w-full flex justify-center items-center">
-        <View className="h-full bg-[#ddd1c5] opacity-70 flex items-center justify-center w-11/12 rounded-lg">
-          <ThemedText style={{ color: "gray" }}>Upcoming Events</ThemedText>
-        </View>
+      <View className="mt-10 h-[25%] w-full flex justify-center items-center">
+        <CarouselCardItem />
       </View>
 
-      <View className="mt-6 w-full px-3 flex justify-start items-center h-[80px]">
+      <View className="mt-3 w-full px-3 flex justify-start items-center h-[80px]">
         <View className="border-b-2 border-b-gray-400 w-full flex justify-between h-full items-center">
           <Button
             title="Check Attendance"
@@ -150,7 +85,7 @@ export default function Home() {
         </View>
       </View>
 
-      <View className="relative flex justify-start items-start w-11/12 mt-5">
+      <View className="relative flex justify-start items-start w-11/12 mt-[10px]">
         <ThemedText type="subtitle" customStyle={{ marginBottom: 15 }}>
           Recents
         </ThemedText>
@@ -187,22 +122,8 @@ export default function Home() {
                   <ThemedText type="subtitle" className="uppercase mb-8">
                     Timetable
                   </ThemedText>
-                  {/* <FlatList
-                    data={courses}
-                    renderItem={({ item, index }) => (
-                      <TimeTableCourse
-                        course_name={item.course_name}
-                        course_code={item.course_code}
-                        start_time={item.start_time}
-                        finish_time={item.finish_time}
-                        key={index}
-                      />
-                    )}
-                    keyExtractor={(item, index) => index.toString()}
-                    showsVerticalScrollIndicator={true}
-                  /> */}
                   <ScrollView>
-                    {courses.map((item, index) => (
+                    {coursesData.map((item, index) => (
                       <TimeTableCourse
                         course_name={item.course_name}
                         course_code={item.course_code}
@@ -249,13 +170,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     height: 600,
-    // backgroundColor: "pink",
   },
   menuContent: {
     flex: 1,
     backgroundColor: "white",
     padding: 20,
-    // height: "100%",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
