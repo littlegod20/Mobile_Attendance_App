@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import { ThemedText } from "../contexts/ThemedText";
 import { AntDesign } from "@expo/vector-icons";
@@ -14,7 +14,7 @@ interface CustomDropDownProps {
   options_type: string;
   customStyles?: object;
   selectedOption?: Option;
-  onSelectOption: (val: Option) => void;
+  onSelectOption: (type: string, option: Option) => void;
 }
 
 const CustomDropDown: React.FC<CustomDropDownProps> = ({
@@ -22,9 +22,16 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
   options_type,
   customStyles,
   onSelectOption,
-  selectedOption,
+  selectedOption: propSelectedOption,
 }) => {
   const [showOptions, setShowOptions] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<Option | undefined>(
+    propSelectedOption
+  );
+
+  useEffect(() => {
+    setSelectedOption(propSelectedOption);
+  }, [propSelectedOption]);
 
   const toggleOptions = () => {
     setShowOptions(!showOptions);
@@ -48,8 +55,9 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
   // };
 
   const handleOptionSelect = (option: Option) => {
+    setSelectedOption(option);
     toggleOptions();
-    onSelectOption(option);
+    onSelectOption(options_type, option);
   };
 
   return (

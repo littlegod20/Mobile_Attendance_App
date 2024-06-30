@@ -34,8 +34,14 @@
       "bundler": "metro",
       "favicon": "/assets/images/favicon.pngy"
     },
-    "assetBundlePatterns": ["**/*"],
-    "plugins": ["expo-router", "expo-font"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store"
+    ],
     "scheme": "attendance-checker",
     "runtimeVersion": "1.0.0"
   }

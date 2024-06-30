@@ -19,7 +19,6 @@ const Lecturer_Dept = () => {
       className="flex-1 w-full p-4 justify-center items-center"
     >
       <View className="w-full h-1/2 flex justify-evenly ">
-        <CustomDropDown options={options} options_type="Year" />
         <CustomDropDown options={options} options_type="Faculty" />
         <CustomDropDown options={options} options_type="Department" />
       </View>

@@ -51,7 +51,9 @@ export default function History() {
 
   const handleOptionSelect = async (option: OptionsProps) => {
     try {
-      const response = await fetch(`${API_URL}/history?${option.value}`);
+      const response = await fetch(
+        `${API_URL}/student/attendance?${option.value}`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch option value");
       }

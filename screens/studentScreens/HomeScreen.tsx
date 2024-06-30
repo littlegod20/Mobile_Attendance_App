@@ -12,38 +12,113 @@ import Button from "../../components/Button";
 import { Link, router } from "expo-router";
 import { darkTheme } from "../../themes/themes";
 import { ThemedView } from "../../contexts/ThemedView";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import RecentCard from "../../components/RecentsCard";
 import { FlatList } from "react-native";
 import { useState, useRef, useEffect } from "react";
 import TimeTableCourse from "../../components/TimeTableCourse";
 import { TouchableWithoutFeedback } from "react-native";
-import { courses, cards } from "../../data";
+import { cards } from "../../data";
 import CarouselCardItem from "../../components/AttendanceProgress";
 import { API_URL } from "@env";
+import * as SecureStore from "expo-secure-store";
+import fetchWithAuth from "../../services/fetchWithAuth";
+
+// Define the User type
+interface User {
+  email?: string;
+  faculty?: string;
+  name?: string;
+  programme: string;
+  role?: string;
+  school_id?: string;
+  year: string;
+}
 
 type Course = {
   course_name: string;
   course_code: string;
-  start_time: string;
-  finish_time: string;
+  credits: string;
 };
 
-export default function Home() {
+type Recents = {
+  course_name: string;
+  course_code: string;
+  time: string;
+};
+
+const Home: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [coursesData, setCoursesData] = useState<Course[]>([]);
+  const [recentData, setRecentData] = useState<Recents[]>([]);
 
   useEffect(() => {
-    fetchCoursesData();
+    fetchUserData();
   }, []);
 
-  const fetchCoursesData = async () => {
+  useEffect(() => {
+    if (user) {
+      fetchRecentsData();
+      fetchCoursesData(user.programme, user.year);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    console.log("Updated courses data:", coursesData);
+    console.log("Updated recents data:", recentData);
+  }, [coursesData, recentData]);
+
+  const fetchUserData = async () => {
     try {
-      const response = await fetch(`${API_URL}/courses`);
-      const data = await response.json();
-      setCoursesData(data);
+      const programme = await SecureStore.getItemAsync("programme");
+      const year = await SecureStore.getItemAsync("year");
+
+      if (programme && year) {
+        setUser({
+          programme,
+          year,
+        });
+      } else {
+        console.error("Some user data is missing from secure storage");
+        console.log("SecureData:", programme, year);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  const fetchCoursesData = async (programme: string, year: string) => {
+    try {
+      const response = await fetchWithAuth(
+        `${API_URL}/student/courses?programme=${programme}&year=${year}`
+      );
+
+      // console.log("Response:", response);
+      const courses = await response.json();
+      setCoursesData(courses[0].courses);
     } catch (error) {
       console.error("Error fetching courses data:", error);
+    }
+  };
+
+  const fetchRecentsData = async () => {
+    try {
+      const response = await fetchWithAuth(`${API_URL}/`);
+      const recents = await response.json();
+
+      if (
+        recents &&
+        recents.recent_checkins &&
+        recents.recent_checkins.length > 0
+      ) {
+        setRecentData(recents.recent_checkins);
+      } else {
+        setRecentData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching recents data:", error);
+      setRecentData([]);
     }
   };
 
@@ -90,23 +165,30 @@ export default function Home() {
           Recents
         </ThemedText>
 
-        <View className="relative h-1/2">
+        <View className="relative h-1/2 w-full">
           <TouchableOpacity onPress={toggleMenu} style={styles.iconContainer}>
-            <MaterialCommunityIcons name="timetable" size={24} color="white" />
+            <FontAwesome5 name="book-reader" size={24} color="white" />
           </TouchableOpacity>
-          <FlatList
-            data={cards}
-            renderItem={({ item }) => (
-              <RecentCard
-                week={item.week}
-                date={item.date}
-                course={item.course}
-                present={item.present}
-              />
-            )}
-            keyExtractor={(item) => item.week}
-            showsVerticalScrollIndicator={false}
-          />
+          {recentData && recentData.length > 0 ? (
+            <FlatList
+              data={recentData}
+              renderItem={({ item }) => (
+                <RecentCard
+                  course_code={item.course_code}
+                  time={item.time}
+                  course_name={item.course_name}
+                />
+              )}
+              keyExtractor={(_i, index) => index.toString()}
+              showsVerticalScrollIndicator={false}
+            />
+          ) : (
+            <View className="w-full flex-1 flex justify-center items-center">
+              <ThemedText type="mediumSemi" className="text-gray-500 italic">
+                No recent history available
+              </ThemedText>
+            </View>
+          )}
         </View>
       </View>
 
@@ -120,18 +202,18 @@ export default function Home() {
                   source={require("../../assets/images/screen_deco.png")}
                 >
                   <ThemedText type="subtitle" className="uppercase mb-8">
-                    Timetable
+                    Courses
                   </ThemedText>
                   <ScrollView>
-                    {coursesData.map((item, index) => (
-                      <TimeTableCourse
-                        course_name={item.course_name}
-                        course_code={item.course_code}
-                        start_time={item.start_time}
-                        finish_time={item.finish_time}
-                        key={index}
-                      />
-                    ))}
+                    {coursesData &&
+                      coursesData.map((item, index) => (
+                        <TimeTableCourse
+                          course_name={item.course_name}
+                          course_code={item.course_code}
+                          credits={item.credits}
+                          key={index}
+                        />
+                      ))}
                   </ScrollView>
                 </ImageBackground>
               </View>
@@ -141,7 +223,7 @@ export default function Home() {
       </Modal>
     </ThemedView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -179,3 +261,5 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
   },
 });
+
+export default Home;
