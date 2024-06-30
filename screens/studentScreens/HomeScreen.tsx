@@ -62,11 +62,13 @@ const Home: React.FC = () => {
     try {
       const programme = await SecureStore.getItemAsync("programme");
       const year = await SecureStore.getItemAsync("year");
+      const name = await SecureStore.getItemAsync("name");
 
-      if (programme && year) {
+      if (programme && year && name) {
         setUser({
           programme,
           year,
+          name,
         });
       } else {
         console.error("Some user data is missing from secure storage");
@@ -126,10 +128,17 @@ const Home: React.FC = () => {
           theme={darkTheme}
         />
         <View className="ml-3">
-          <ThemedText type="subtitle" style={{ fontSize: 25 }}>
+          <ThemedText type="subtitle" style={{ fontSize: 20 }}>
             Hello
           </ThemedText>
-          <ThemedText type="default">AKWASI NTIM</ThemedText>
+          <ThemedText
+            type="defaultSemiBold"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            className="w-44"
+          >
+            {user?.name}
+          </ThemedText>
         </View>
       </View>
 

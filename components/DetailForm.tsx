@@ -8,7 +8,7 @@ type DetailFormProps = {
   name?: string;
   email?: string;
   password?: string;
-  studentId?: number;
+  studentId?: string;
   indexNo?: number;
   programme?: string;
   year?: string;
@@ -67,7 +67,9 @@ const DetailForm = ({
               Password
             </ThemedText>
             <View>
-              <ThemedText>{password}</ThemedText>
+              <ThemedText className="w-32" numberOfLines={1}>
+                {"*".repeat(password.length)}
+              </ThemedText>
             </View>
           </View>
         ) : null}
@@ -82,20 +84,6 @@ const DetailForm = ({
             </ThemedText>
             <View>
               <ThemedText>{studentId}</ThemedText>
-            </View>
-          </View>
-        ) : null}
-
-        {indexNo ? (
-          <View className="h-24 flex ">
-            <ThemedText
-              type="mediumSemi"
-              className="border-b-[1px] mb-2 border-gray-400"
-            >
-              Index Number
-            </ThemedText>
-            <View>
-              <ThemedText>{indexNo}</ThemedText>
             </View>
           </View>
         ) : null}

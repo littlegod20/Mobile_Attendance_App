@@ -54,12 +54,13 @@ const LogIn = () => {
         // storing the token in localStorage for persistence across page reloads
         await SecureStore.setItemAsync("authToken", data.access_token);
         await SecureStore.setItemAsync("email", data.user.email);
-        // await SecureStore.setItemAsync("faculty", data.user.faculty);
+        await SecureStore.setItemAsync("faculty", data.user.faculty);
         await SecureStore.setItemAsync("name", data.user.name);
         await SecureStore.setItemAsync("programme", data.user.programme);
         await SecureStore.setItemAsync("role", data.user.role);
-        // await SecureStore.setItemAsync("school_id", data.user.school_id);
+        await SecureStore.setItemAsync("school_id", data.user.school_id);
         await SecureStore.setItemAsync("year", data.user.year);
+        await SecureStore.setItemAsync("password", data.user.password);
 
         console.log("Login successful");
         // Redirect user or update UI to reflect logged-in state

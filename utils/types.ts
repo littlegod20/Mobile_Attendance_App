@@ -43,11 +43,12 @@ export interface User {
   role?: string;
   school_id?: string;
   year: string;
+  password?: string;
 }
 
 export interface InputConfig {
   name: string | keyof UserRegistrationData;
-  placeholder: string;
+  placeholder: string | undefined;
   keyboardType?: KeyboardTypeOptions;
   secureTextEntry?: boolean;
   multiline?: boolean;
