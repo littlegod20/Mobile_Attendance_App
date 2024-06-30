@@ -1,11 +1,9 @@
 import {
   View,
-  Text,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
   Modal,
-  PanResponder,
   ImageBackground,
 } from "react-native";
 import { Avatar } from "react-native-paper";
@@ -14,101 +12,115 @@ import Button from "../../components/Button";
 import { Link, router } from "expo-router";
 import { darkTheme } from "../../themes/themes";
 import { ThemedView } from "../../contexts/ThemedView";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import RecentCard from "../../components/RecentsCard";
 import { FlatList } from "react-native";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import TimeTableCourse from "../../components/TimeTableCourse";
 import { TouchableWithoutFeedback } from "react-native";
+import { cards } from "../../data";
+import CarouselCardItem from "../../components/AttendanceProgress";
+import { API_URL } from "@env";
+import * as SecureStore from "expo-secure-store";
+import fetchWithAuth from "../../services/fetchWithAuth";
 
-interface CourseData {
+// Define the User type
+interface User {
+  email?: string;
+  faculty?: string;
+  name?: string;
+  programme: string;
+  role?: string;
+  school_id?: string;
+  year: string;
+}
+
+type Course = {
   course_name: string;
   course_code: string;
-  start_time: string;
-  finish_time: string;
-}
+  credits: string;
+};
 
-const courses: CourseData[] = [
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-];
+type Recents = {
+  course_name: string;
+  course_code: string;
+  time: string;
+};
 
-interface CardData {
-  week: string;
-  course: string;
-  date: string;
-  present: boolean;
-}
-
-const cards: CardData[] = [
-  {
-    week: "Week 1",
-    course: "Basic Mechanics",
-    date: "June 11",
-    present: true,
-  },
-  {
-    week: "Week 2",
-    course: "Applied Electricity",
-    date: "June 11",
-    present: false,
-  },
-  {
-    week: "Week 3",
-    course: "EMC",
-    date: "June 11",
-    present: true,
-  },
-  {
-    week: "Week 4",
-    course: "Linear Electronics",
-    date: "June 11",
-    present: false,
-  },
-];
-
-export default function Home() {
+const Home: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [coursesData, setCoursesData] = useState<Course[]>([]);
+  const [recentData, setRecentData] = useState<Recents[]>([]);
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchRecentsData();
+      fetchCoursesData(user.programme, user.year);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    console.log("Updated courses data:", coursesData);
+    console.log("Updated recents data:", recentData);
+  }, [coursesData, recentData]);
+
+  const fetchUserData = async () => {
+    try {
+      const programme = await SecureStore.getItemAsync("programme");
+      const year = await SecureStore.getItemAsync("year");
+
+      if (programme && year) {
+        setUser({
+          programme,
+          year,
+        });
+      } else {
+        console.error("Some user data is missing from secure storage");
+        console.log("SecureData:", programme, year);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  const fetchCoursesData = async (programme: string, year: string) => {
+    try {
+      const response = await fetchWithAuth(
+        `${API_URL}/student/courses?programme=${programme}&year=${year}`
+      );
+
+      // console.log("Response:", response);
+      const courses = await response.json();
+      setCoursesData(courses[0].courses);
+    } catch (error) {
+      console.error("Error fetching courses data:", error);
+    }
+  };
+
+  const fetchRecentsData = async () => {
+    try {
+      const response = await fetchWithAuth(`${API_URL}/`);
+      const recents = await response.json();
+
+      if (
+        recents &&
+        recents.recent_checkins &&
+        recents.recent_checkins.length > 0
+      ) {
+        setRecentData(recents.recent_checkins);
+      } else {
+        setRecentData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching recents data:", error);
+      setRecentData([]);
+    }
+  };
 
   const handleCheckAttendance = () => {
     router.navigate("/student/check_attendance");
@@ -134,13 +146,11 @@ export default function Home() {
         </View>
       </View>
 
-      <View className="mt-10 h-[20%] w-full flex justify-center items-center">
-        <View className="h-full bg-[#ddd1c5] opacity-70 flex items-center justify-center w-11/12 rounded-lg">
-          <ThemedText style={{ color: "gray" }}>Upcoming Events</ThemedText>
-        </View>
+      <View className="mt-10 h-[25%] w-full flex justify-center items-center">
+        <CarouselCardItem />
       </View>
 
-      <View className="mt-6 w-full px-3 flex justify-start items-center h-[80px]">
+      <View className="mt-3 w-full px-3 flex justify-start items-center h-[80px]">
         <View className="border-b-2 border-b-gray-400 w-full flex justify-between h-full items-center">
           <Button
             title="Check Attendance"
@@ -150,28 +160,35 @@ export default function Home() {
         </View>
       </View>
 
-      <View className="relative flex justify-start items-start w-11/12 mt-5">
+      <View className="relative flex justify-start items-start w-11/12 mt-[10px]">
         <ThemedText type="subtitle" customStyle={{ marginBottom: 15 }}>
           Recents
         </ThemedText>
 
-        <View className="relative h-1/2">
+        <View className="relative h-1/2 w-full">
           <TouchableOpacity onPress={toggleMenu} style={styles.iconContainer}>
-            <MaterialCommunityIcons name="timetable" size={24} color="white" />
+            <FontAwesome5 name="book-reader" size={24} color="white" />
           </TouchableOpacity>
-          <FlatList
-            data={cards}
-            renderItem={({ item }) => (
-              <RecentCard
-                week={item.week}
-                date={item.date}
-                course={item.course}
-                present={item.present}
-              />
-            )}
-            keyExtractor={(item) => item.week}
-            showsVerticalScrollIndicator={false}
-          />
+          {recentData && recentData.length > 0 ? (
+            <FlatList
+              data={recentData}
+              renderItem={({ item }) => (
+                <RecentCard
+                  course_code={item.course_code}
+                  time={item.time}
+                  course_name={item.course_name}
+                />
+              )}
+              keyExtractor={(_i, index) => index.toString()}
+              showsVerticalScrollIndicator={false}
+            />
+          ) : (
+            <View className="w-full flex-1 flex justify-center items-center">
+              <ThemedText type="mediumSemi" className="text-gray-500 italic">
+                No recent history available
+              </ThemedText>
+            </View>
+          )}
         </View>
       </View>
 
@@ -185,32 +202,18 @@ export default function Home() {
                   source={require("../../assets/images/screen_deco.png")}
                 >
                   <ThemedText type="subtitle" className="uppercase mb-8">
-                    Timetable
+                    Courses
                   </ThemedText>
-                  {/* <FlatList
-                    data={courses}
-                    renderItem={({ item, index }) => (
-                      <TimeTableCourse
-                        course_name={item.course_name}
-                        course_code={item.course_code}
-                        start_time={item.start_time}
-                        finish_time={item.finish_time}
-                        key={index}
-                      />
-                    )}
-                    keyExtractor={(item, index) => index.toString()}
-                    showsVerticalScrollIndicator={true}
-                  /> */}
                   <ScrollView>
-                    {courses.map((item, index) => (
-                      <TimeTableCourse
-                        course_name={item.course_name}
-                        course_code={item.course_code}
-                        start_time={item.start_time}
-                        finish_time={item.finish_time}
-                        key={index}
-                      />
-                    ))}
+                    {coursesData &&
+                      coursesData.map((item, index) => (
+                        <TimeTableCourse
+                          course_name={item.course_name}
+                          course_code={item.course_code}
+                          credits={item.credits}
+                          key={index}
+                        />
+                      ))}
                   </ScrollView>
                 </ImageBackground>
               </View>
@@ -220,7 +223,7 @@ export default function Home() {
       </Modal>
     </ThemedView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -249,14 +252,14 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     height: 600,
-    // backgroundColor: "pink",
   },
   menuContent: {
     flex: 1,
     backgroundColor: "white",
     padding: 20,
-    // height: "100%",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
 });
+
+export default Home;

@@ -39,7 +39,8 @@
     ],
     "plugins": [
       "expo-router",
-      "expo-font"
+      "expo-font",
+      "expo-secure-store"
     ],
     "scheme": "attendance-checker",
     "runtimeVersion": "1.0.0"

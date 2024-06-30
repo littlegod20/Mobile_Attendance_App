@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { KeyboardTypeOptions, View } from "react-native";
 import React from "react";
 import CustomInput from "./Input";
 import { ThemedText } from "../contexts/ThemedText";
@@ -6,11 +6,16 @@ import { useState } from "react";
 import Button from "./Button";
 import { router } from "expo-router";
 import { Link } from "expo-router";
+import {
+  UserRegistrationData,
+  useUserRegistration,
+} from "./UserRegistrationData";
 
 interface InputConfig {
-  name: string;
+  name: keyof UserRegistrationData;
   placeholder: string;
-  keyboardType?: string;
+  keyboardType?: KeyboardTypeOptions;
+  secureTextEntry?: boolean;
   multiline?: boolean;
 }
 
@@ -18,7 +23,7 @@ interface CustomFormProps {
   inputs: InputConfig[];
   onSubmit: (formValues: { [key: string]: string }) => void;
   buttonTitle: string;
-  path: string;
+  path?: string;
   link_name?: string;
   link_path?: string;
   message?: string;
@@ -33,40 +38,48 @@ const CustomForm: React.FC<CustomFormProps> = ({
   link_path,
   message,
 }) => {
-  const initialFormState = inputs.reduce((acc, inputs) => {
-    acc[inputs.name] = "";
-    return acc;
-  }, {} as { [key: string]: string });
-
-  const [formValues, setFormValues] = useState<{ [key: string]: string }>(
-    initialFormState
-  );
+  const { userData, updateUserData } = useUserRegistration();
 
   const handleInputChange = (key: string, value: string) => {
-    setFormValues({
-      ...formValues,
+    updateUserData({
+      ...userData,
       [key]: value,
     });
   };
 
+  const transformUserData = (
+    data: UserRegistrationData
+  ): { [key: string]: string } => {
+    const transformedData: { [key: string]: string } = {};
+    Object.keys(data).forEach((key) => {
+      if (data[key as keyof UserRegistrationData] !== undefined) {
+        transformedData[key] = String(data[key as keyof UserRegistrationData]);
+      }
+    });
+    return transformedData;
+  };
+
   const handleSubmit = () => {
-    onSubmit(formValues);
-    router.navigate({ pathname: path });
+    const transformedData = transformUserData(userData);
+    onSubmit(transformedData);
+
+    path ? router.navigate({ pathname: path }) : null;
   };
 
   return (
-    <View className="flex-1 justify-start mt-5 px-[20px]  w-full">
+    <View className="flex-1 justify-start mt-5 px-[20px] w-full">
       <View className="mb-12 w-full">
         {inputs.map((input) => (
-          <View key={input.name} className="mb-1">
-            <ThemedText type="defaultSemiBold" className="mb-2">
+          <View key={input.name as string} className="mb-1">
+            <ThemedText type="defaultSemiBold" className="mb-2 capitalize">
               {input.name}:
             </ThemedText>
             <CustomInput
               placeholder={input.placeholder}
-              value={formValues[input.name]}
+              value={userData[input.name] ?? ""}
               onChangeText={(value) => handleInputChange(input.name, value)}
-              // keyboardType={input.keyboardType}
+              keyboardType={input.keyboardType}
+              secureTextEntry={input.secureTextEntry}
               multiline={input.multiline}
             />
           </View>

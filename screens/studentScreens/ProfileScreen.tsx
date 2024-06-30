@@ -15,6 +15,7 @@ import { useState, useRef } from "react";
 import CenterTabBar from "../../components/CenterTab";
 import DetailForm from "../../components/DetailForm";
 import CustomForm from "../../components/Form";
+import KeyboardAvoidanceContainer from "../../components/KeyboardAvoidance";
 
 const tabs = [
   {
@@ -119,14 +120,16 @@ export default function Profile() {
           />
         </View>
 
-        <View style={{ width: width }}>
-          <CustomForm
-            inputs={inputConfigs}
-            onSubmit={handleSaveDetails}
-            buttonTitle="Save"
-            path={"./history"}
-          />
-        </View>
+        <KeyboardAvoidanceContainer>
+          <View style={{ width: width }}>
+            <CustomForm
+              inputs={inputConfigs}
+              onSubmit={handleSaveDetails}
+              buttonTitle="Save"
+              path={"./history"}
+            />
+          </View>
+        </KeyboardAvoidanceContainer>
       </Animated.ScrollView>
     </ThemedView>
   );

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
 import { ThemedText } from "../contexts/ThemedText";
 import { AntDesign } from "@expo/vector-icons";
+import { API_URL } from "@env";
 
 interface Option {
   label: string;
@@ -12,23 +13,51 @@ interface CustomDropDownProps {
   options: Option[];
   options_type: string;
   customStyles?: object;
+  selectedOption?: Option;
+  onSelectOption: (type: string, option: Option) => void;
 }
 
 const CustomDropDown: React.FC<CustomDropDownProps> = ({
   options,
   options_type,
   customStyles,
+  onSelectOption,
+  selectedOption: propSelectedOption,
 }) => {
   const [showOptions, setShowOptions] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+  const [selectedOption, setSelectedOption] = useState<Option | undefined>(
+    propSelectedOption
+  );
+
+  useEffect(() => {
+    setSelectedOption(propSelectedOption);
+  }, [propSelectedOption]);
 
   const toggleOptions = () => {
     setShowOptions(!showOptions);
   };
 
+  // const handleOptionSelect = async (option: Option) => {
+  //   setSelectedOption(option);
+  //   toggleOptions();
+  //   console.log(option);
+  //   try {
+  //     const selected = await fetch(`${API_URL}/history?${option.value}`);
+
+  //     if (!selected.ok) {
+  //       throw new Error("Failed to send option");
+  //     }
+  //     const data = await selected.json();
+  //     console.log("Student Option:", data);
+  //   } catch (error) {
+  //     console.log("Failed to send student's selected option:", error);
+  //   }
+  // };
+
   const handleOptionSelect = (option: Option) => {
     setSelectedOption(option);
     toggleOptions();
+    onSelectOption(options_type, option);
   };
 
   return (

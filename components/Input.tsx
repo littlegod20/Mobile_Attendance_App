@@ -1,10 +1,17 @@
-import { TextInput, TextInputProps, View } from "react-native";
+import {
+  KeyboardTypeOptions,
+  TextInput,
+  TextInputProps,
+  View,
+} from "react-native";
 import { useThemeColor } from "../hooks/useThemeColor";
 
 export type CustomInputProps = TextInputProps & {
   placeholder?: string;
   lightColor?: string;
   darkColor?: string;
+  secureTextEntry?: boolean;
+  keyboardType?: KeyboardTypeOptions;
 };
 
 const CustomInput = ({
@@ -12,6 +19,9 @@ const CustomInput = ({
   placeholder,
   lightColor,
   darkColor,
+  secureTextEntry,
+  keyboardType,
+  multiline,
   ...rest
 }: CustomInputProps) => {
   const borderColor = useThemeColor(
@@ -30,7 +40,7 @@ const CustomInput = ({
     "text"
   );
 
-  const height = 50;
+  const height = multiline ? 100 : 50;
   const borderWidth = 1;
   const borderRadius = 5;
   const paddingHorizontal = 10;
@@ -56,6 +66,9 @@ const CustomInput = ({
           style,
         ]}
         placeholder={placeholder}
+        secureTextEntry={secureTextEntry}
+        keyboardType={keyboardType}
+        multiline={multiline}
         {...rest}
       />
     </View>

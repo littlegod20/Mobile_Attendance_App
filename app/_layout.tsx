@@ -5,6 +5,7 @@ import { Slot, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { UserRegistrationProvider } from "../components/UserRegistrationData";
 
 // Prevent the splash screen from auto hiding
 SplashScreen.preventAutoHideAsync();
@@ -51,7 +52,9 @@ const RootLayout = () => {
 
   return (
     <React.StrictMode>
-      <Slot />
+      <UserRegistrationProvider>
+        <Slot />
+      </UserRegistrationProvider>
     </React.StrictMode>
   );
 };

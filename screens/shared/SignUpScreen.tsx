@@ -1,43 +1,74 @@
-import { View, Text, ImageBackground, TextInput } from "react-native";
+import { View, ImageBackground, KeyboardTypeOptions } from "react-native";
 import React from "react";
 import { ThemedView } from "../../contexts/ThemedView";
 import { ThemedText } from "../../contexts/ThemedText";
 import CustomForm from "../../components/Form";
+import KeyboardAvoidanceContainer from "../../components/KeyboardAvoidance";
+import {
+  useUserRegistration,
+  UserRegistrationData,
+} from "../../components/UserRegistrationData";
+
+export interface InputConfig {
+  name: keyof UserRegistrationData;
+  placeholder: string;
+  keyboardType?: KeyboardTypeOptions;
+  secureTextEntry?: boolean;
+  multiline?: boolean;
+}
 
 const SignUp = () => {
-  const inputConfigs = [
-    { name: "Name", placeholder: "Surname Firstname" },
-    { name: "Email", placeholder: "Enter your email" },
-    { name: "Password", placeholder: "Enter your password" },
-    { name: "ID", placeholder: "Enter your school id number" },
+  const { updateUserData } = useUserRegistration();
+
+  const inputConfigs: InputConfig[] = [
+    { name: "name", placeholder: "Surname Firstname", keyboardType: "default" },
+    {
+      name: "email",
+      placeholder: "Enter your email",
+      keyboardType: "email-address",
+    },
+    {
+      name: "password",
+      placeholder: "Enter your password",
+      secureTextEntry: true,
+    },
+    {
+      name: "school_id",
+      placeholder: "Enter your school id number",
+      keyboardType: "numeric",
+    },
   ];
 
-  const handleFormSubmit = (formValues: { [key: string]: string }) => {
-    console.log("Form Values:", formValues);
+  const handleFormSubmit = (formValues: Partial<UserRegistrationData>) => {
+    updateUserData(formValues);
   };
 
   return (
     <ThemedView className="flex-1">
       <ImageBackground
         source={require("../../assets/images/screen_deco.png")}
-        className="flex-1 w-full  justify-center items-center"
+        className="flex-1 w-full justify-center items-center"
       >
-        <View className="h-1/4 p-[20px] flex flex-col justify-end  items-start w-full">
-          <ThemedText type="title">Create an account</ThemedText>
-          <ThemedText type="smalldefault" className="text--300">
-            Welcome, please enter your details
-          </ThemedText>
-        </View>
+        <KeyboardAvoidanceContainer>
+          <View className="mt-20">
+            <View className="p-[20px] flex flex-col justify-end items-start w-full">
+              <ThemedText type="title">Create an account</ThemedText>
+              <ThemedText type="smalldefault" className="text-gray-300">
+                Welcome, please enter your details
+              </ThemedText>
+            </View>
 
-        <CustomForm
-          inputs={inputConfigs}
-          onSubmit={handleFormSubmit}
-          buttonTitle="Sign Up"
-          path={"./student-lecturer"}
-          message="Already have an account?"
-          link_name="Log in"
-          link_path="./log_in"
-        />
+            <CustomForm
+              inputs={inputConfigs}
+              onSubmit={handleFormSubmit}
+              buttonTitle="Next"
+              path={"./student-lecturer"}
+              message="Already have an account?"
+              link_name="Log in"
+              link_path="./log_in"
+            />
+          </View>
+        </KeyboardAvoidanceContainer>
       </ImageBackground>
     </ThemedView>
   );

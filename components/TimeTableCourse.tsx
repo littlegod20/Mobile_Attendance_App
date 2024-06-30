@@ -1,19 +1,18 @@
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import React from "react";
 import { ThemedText } from "../contexts/ThemedText";
 
 type TimeTableCourseProps = {
   course_name: string;
   course_code: string;
-  start_time: string;
-  finish_time: string;
+  credits: string;
+  // finish_time?: string;
 };
 
 const TimeTableCourse = ({
+  credits,
   course_name,
   course_code,
-  start_time,
-  finish_time,
 }: TimeTableCourseProps) => {
   return (
     <View className="w-full justify-evenly items-center mb-4 flex flex-row h-28 border-coffee_light border-[1px] rounded-md">
@@ -22,9 +21,11 @@ const TimeTableCourse = ({
         <ThemedText type="defaultSemiBold">({course_code})</ThemedText>
       </View>
 
-      <View className="p-2 h-full flex w-[20%] items-center justify-center ">
-        <ThemedText type="defaultSemiBold">{start_time}-</ThemedText>
-        <ThemedText type="defaultSemiBold">{finish_time}</ThemedText>
+      <View className="p-2 h-full flex w-[20%] items-center justify-center">
+        <ThemedText type="mediumSemi" className="text-center">
+          Credit Hrs
+        </ThemedText>
+        <ThemedText type="mediumSemi">{credits}</ThemedText>
       </View>
     </View>
   );

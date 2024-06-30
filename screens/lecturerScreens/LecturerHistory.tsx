@@ -1,20 +1,18 @@
 import {
   View,
-  Text,
   ImageBackground,
   StatusBar,
   Dimensions,
+  FlatList,
+  ScrollView,
+  Animated,
 } from "react-native";
 import React, { useRef, useState } from "react";
 import { ThemedView } from "../../contexts/ThemedView";
-import GoBackBtn from "../../components/GoBackBtn";
 import { ThemedText } from "../../contexts/ThemedText";
 import CustomDropDown from "../../components/CustomDropDown";
 import CenterTabBar from "../../components/CenterTab";
-import { Animated } from "react-native";
-import DetailForm from "../../components/DetailForm";
-import CustomForm from "../../components/Form";
-import { ScrollView } from "react-native";
+import { Octicons } from "@expo/vector-icons";
 
 const options = [
   { label: "Telecom 1", value: "option1" },
@@ -23,18 +21,133 @@ const options = [
   { label: "Telecom 4", value: "option4" },
 ];
 
-const tabs = [
+type StudentsProps = {
+  id: number;
+  name: string;
+  status: boolean;
+  index: number;
+};
+
+const students: StudentsProps[] = [
   {
     id: 1,
-    label: "All(200)",
+    name: "James",
+    status: true,
+    index: 43203054,
   },
   {
     id: 2,
-    label: "Above 50%",
+    name: "James",
+    status: false,
+    index: 43203054,
   },
   {
     id: 3,
-    label: "Below 50%",
+    name: "John",
+    status: true,
+    index: 43203054,
+  },
+  {
+    id: 4,
+    name: "James",
+    status: false,
+    index: 43203054,
+  },
+  {
+    id: 5,
+    name: "James",
+    status: false,
+    index: 43203054,
+  },
+  {
+    id: 6,
+    name: "James",
+    status: true,
+    index: 43203054,
+  },
+  {
+    id: 7,
+    name: "James",
+    status: true,
+    index: 43203054,
+  },
+  {
+    id: 8,
+    name: "James",
+    status: true,
+    index: 43203054,
+  },
+  {
+    id: 9,
+    name: "James",
+    status: true,
+    index: 43203054,
+  },
+  {
+    id: 10,
+    name: "James",
+    status: true,
+    index: 43203054,
+  },
+  {
+    id: 11,
+    name: "James",
+    status: false,
+    index: 43203054,
+  },
+  {
+    id: 12,
+    name: "Theophilus Asante Frimpong",
+    status: false,
+    index: 43203054,
+  },
+  {
+    id: 13,
+    name: "James",
+    status: true,
+    index: 43203054,
+  },
+  {
+    id: 14,
+    name: "James",
+    status: false,
+    index: 43203054,
+  },
+  {
+    id: 15,
+    name: "James Appiah Owusu",
+    status: false,
+    index: 43203054,
+  },
+  {
+    id: 16,
+    name: "Appiah Daniel",
+    status: false,
+    index: 43203054,
+  },
+  {
+    id: 17,
+    name: "James",
+    status: false,
+    index: 43203054,
+  },
+];
+const tabs = [
+  {
+    id: 1,
+    label: `All (${students.length})`,
+  },
+  {
+    id: 2,
+    label: `Above 50% (${
+      students.filter((item) => item.status === true).length
+    })`,
+  },
+  {
+    id: 3,
+    label: `Below 50% (${
+      students.filter((item) => item.status === false).length
+    })`,
   },
 ];
 
@@ -92,25 +205,205 @@ const LecturerHistory = () => {
           scrollEventThrottle={16}
         >
           {/* All(200) Section */}
-          <View style={{ width: width }}>
-            <DetailForm
-              name="Lecturer Name"
-              email="lecturer@gmail.com"
-              password="****"
+          <View
+            style={{
+              width: width,
+              paddingHorizontal: 15,
+              // backgroundColor: "#DC924D",
+              marginTop: 10,
+              // height: 30,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <View className="w-full flex justify-between flex-row bg-coffee_light mb-4">
+              <View className="flex-1 w-1/2">
+                <ThemedText>Name</ThemedText>
+              </View>
+              <View className="w-1/3 ">
+                <ThemedText>Index No.</ThemedText>
+              </View>
+              <View className="">
+                <ThemedText>Status</ThemedText>
+              </View>
+            </View>
+            <FlatList
+              data={students}
+              renderItem={({ item }) => (
+                <View className="border-t-2 border-gray-400   flex items-center w-full justify-between flex-row h-20">
+                  <View className="flex-1 w-1/2 ">
+                    <ThemedText
+                      className=""
+                      ellipsizeMode="tail"
+                      numberOfLines={1}
+                      style={{ maxWidth: 165 }}
+                    >
+                      {item.name}
+                    </ThemedText>
+                  </View>
+                  <View className="w-1/3 mr-5">
+                    <ThemedText
+                      className=""
+                      ellipsizeMode="tail"
+                      numberOfLines={1}
+                      style={{ maxWidth: 100 }}
+                    >
+                      {item.index}
+                    </ThemedText>
+                  </View>
+                  <View className="">
+                    <ThemedText
+                      className=""
+                      ellipsizeMode="tail"
+                      numberOfLines={1}
+                      style={{ maxWidth: 100 }}
+                    >
+                      {item.status ? (
+                        <Octicons name="dot-fill" size={24} color="green" />
+                      ) : (
+                        <Octicons name="dot-fill" size={24} color="red" />
+                      )}
+                    </ThemedText>
+                  </View>
+                </View>
+              )}
+              keyExtractor={(item) => item.id.toString()}
+              // showsVerticalScrollIndicator={false}
+              style={{ marginBottom: 80 }}
             />
           </View>
+
           {/* Above 50% Section */}
-          <View style={{ width: width }}>
-            <DetailForm
-              serialNo={2395959}
-              programme="Bsc. Telecommunication Eng."
+          <View
+            style={{
+              width: width,
+              paddingHorizontal: 15,
+              marginTop: 10,
+              // height: 30,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <View className="w-full flex justify-between flex-row bg-coffee_light mb-4">
+              <View className="flex-1 w-1/2">
+                <ThemedText>Name</ThemedText>
+              </View>
+              <View className="w-1/3 ">
+                <ThemedText>Index No.</ThemedText>
+              </View>
+              <View className="">
+                <ThemedText>Status</ThemedText>
+              </View>
+            </View>
+            <FlatList
+              data={students.filter((item) => item.status === true)}
+              renderItem={({ item }) => (
+                <View className="border-t-2 border-gray-400   flex items-center w-full justify-between flex-row h-20">
+                  <View className="flex-1 w-1/2 ">
+                    <ThemedText
+                      className=""
+                      ellipsizeMode="tail"
+                      numberOfLines={1}
+                      style={{ maxWidth: 165 }}
+                    >
+                      {item.name}
+                    </ThemedText>
+                  </View>
+                  <View className="w-1/3 mr-5">
+                    <ThemedText
+                      className=""
+                      ellipsizeMode="tail"
+                      numberOfLines={1}
+                      style={{ maxWidth: 100 }}
+                    >
+                      {item.index}
+                    </ThemedText>
+                  </View>
+                  <View className="">
+                    <ThemedText
+                      className=""
+                      ellipsizeMode="tail"
+                      numberOfLines={1}
+                      style={{ maxWidth: 100 }}
+                    >
+                      {item.status && (
+                        <Octicons name="dot-fill" size={24} color="green" />
+                      )}
+                    </ThemedText>
+                  </View>
+                </View>
+              )}
+              keyExtractor={(item) => item.id.toString()}
+              // showsVerticalScrollIndicator={false}
+              style={{ marginBottom: 80 }}
             />
           </View>
+
           {/* Below 50% Section */}
-          <View style={{ width: width }}>
-            <DetailForm
-              serialNo={2395959}
-              programme="Bsc. Telecommunication Eng."
+          <View
+            style={{
+              width: width,
+              paddingHorizontal: 15,
+              marginTop: 10,
+              // height: 30,
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <View className="w-full flex justify-between flex-row bg-coffee_light mb-4">
+              <View className="flex-1 w-1/2">
+                <ThemedText>Name</ThemedText>
+              </View>
+              <View className="w-1/3 ">
+                <ThemedText>Index No.</ThemedText>
+              </View>
+              <View className="">
+                <ThemedText>Status</ThemedText>
+              </View>
+            </View>
+            <FlatList
+              data={students.filter((item) => item.status === false)}
+              renderItem={({ item }) => (
+                <View className="border-t-2 border-gray-400   flex items-center w-full justify-between flex-row h-20">
+                  <View className="flex-1 w-1/2 ">
+                    <ThemedText
+                      className=""
+                      ellipsizeMode="tail"
+                      numberOfLines={1}
+                      style={{ maxWidth: 165 }}
+                    >
+                      {item.name}
+                    </ThemedText>
+                  </View>
+                  <View className="w-1/3 mr-5">
+                    <ThemedText
+                      className=""
+                      ellipsizeMode="tail"
+                      numberOfLines={1}
+                      style={{ maxWidth: 100 }}
+                    >
+                      {item.index}
+                    </ThemedText>
+                  </View>
+                  <View className="">
+                    <ThemedText
+                      className=""
+                      ellipsizeMode="tail"
+                      numberOfLines={1}
+                      style={{ maxWidth: 100 }}
+                    >
+                      {item.status ? (
+                        <Octicons name="dot-fill" size={24} color="green" />
+                      ) : (
+                        <Octicons name="dot-fill" size={24} color="red" />
+                      )}
+                    </ThemedText>
+                  </View>
+                </View>
+              )}
+              keyExtractor={(item) => item.id.toString()}
+              // showsVerticalScrollIndicator={false}
+              style={{ marginBottom: 80 }}
             />
           </View>
         </Animated.ScrollView>
