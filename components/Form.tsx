@@ -10,14 +10,7 @@ import {
   UserRegistrationData,
   useUserRegistration,
 } from "./UserRegistrationData";
-
-interface InputConfig {
-  name: keyof UserRegistrationData;
-  placeholder: string;
-  keyboardType?: KeyboardTypeOptions;
-  secureTextEntry?: boolean;
-  multiline?: boolean;
-}
+import { InputConfig } from "../utils/types";
 
 interface CustomFormProps {
   inputs: InputConfig[];
@@ -66,6 +59,13 @@ const CustomForm: React.FC<CustomFormProps> = ({
     path ? router.navigate({ pathname: path }) : null;
   };
 
+  const getInputValue = (key: string): string => {
+    if (key in userData) {
+      return userData[key as keyof UserRegistrationData] as string;
+    }
+    return "";
+  };
+
   return (
     <View className="flex-1 justify-start mt-5 px-[20px] w-full">
       <View className="mb-12 w-full">
@@ -76,7 +76,7 @@ const CustomForm: React.FC<CustomFormProps> = ({
             </ThemedText>
             <CustomInput
               placeholder={input.placeholder}
-              value={userData[input.name] ?? ""}
+              value={getInputValue(input.name)}
               onChangeText={(value) => handleInputChange(input.name, value)}
               keyboardType={input.keyboardType}
               secureTextEntry={input.secureTextEntry}

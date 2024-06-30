@@ -1,7 +1,5 @@
 import { TouchableOpacity, View } from "react-native";
 import { ThemedText } from "../contexts/ThemedText";
-import { FontAwesome } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
 
 export type RecentCardProps = {
   course_code: string;

@@ -1,12 +1,5 @@
-export interface CarouselProps {
-  id?: number;
-  title?: string;
-  time?: string;
-  courseId?: string;
-  courseName?: string;
-  percentage?: number;
-}
-[];
+import { CarouselProps } from "./utils/types";
+
 export const carousel: CarouselProps[] = [
   {
     id: 1,
@@ -21,88 +14,31 @@ export const carousel: CarouselProps[] = [
   { courseId: "MAT 201", courseName: "Mathematics", percentage: 90 },
 ];
 
-export interface CourseData {
-  course_name: string;
-  course_code: string;
-  start_time: string;
-  finish_time: string;
-}
-
-export const courses: CourseData[] = [
+export const programme = [
   {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
+    label: "Telecommunication Engineering",
+    value: "Telecommunication Engineering",
   },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
-  {
-    course_name: "Applied Elecricity",
-    course_code: "TE 472",
-    start_time: "8:15",
-    finish_time: "10-15",
-  },
+  { label: "Computer Engineering", value: "Computer Engineering" },
+  { label: "Electrical Engineering", value: "Electrical Engineering" },
+  { label: "Biomedical Engineering", value: "Biomedical Engineering" },
 ];
 
-export interface CardData {
-  week: string;
-  course: string;
-  date: string;
-  present: boolean;
-}
+export const yearOfStudy = [
+  { label: "First Year", value: "1" },
+  { label: "Second Year", value: "2" },
+  { label: "Third Year", value: "3" },
+  { label: "Fourth Year", value: "4" },
+];
 
-export const cards: CardData[] = [
+export const faculty = [
   {
-    week: "Week 1",
-    course: "Basic Mechanics",
-    date: "June 11",
-    present: true,
+    label: "Faculty of Computer & Electrical Engineering",
+    value: "Faculty of Computer & Electrical Engineering",
   },
+  { label: "Faculty of Science", value: "Faculty of Science" },
   {
-    week: "Week 2",
-    course: "Applied Electricity",
-    date: "June 11",
-    present: false,
-  },
-  {
-    week: "Week 3",
-    course: "EMC",
-    date: "June 11",
-    present: true,
-  },
-  {
-    week: "Week 4",
-    course: "Linear Electronics",
-    date: "June 11",
-    present: false,
+    label: "Faculty of Mechanical & Automobile",
+    value: "Faculty of Mechanical & Automobile",
   },
 ];

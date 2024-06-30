@@ -18,22 +18,11 @@ import { FlatList } from "react-native";
 import { useState, useRef, useEffect } from "react";
 import TimeTableCourse from "../../components/TimeTableCourse";
 import { TouchableWithoutFeedback } from "react-native";
-import { cards } from "../../data";
 import CarouselCardItem from "../../components/AttendanceProgress";
 import { API_URL } from "@env";
 import * as SecureStore from "expo-secure-store";
 import fetchWithAuth from "../../services/fetchWithAuth";
-
-// Define the User type
-interface User {
-  email?: string;
-  faculty?: string;
-  name?: string;
-  programme: string;
-  role?: string;
-  school_id?: string;
-  year: string;
-}
+import { User } from "../../utils/types";
 
 type Course = {
   course_name: string;
@@ -93,8 +82,6 @@ const Home: React.FC = () => {
       const response = await fetchWithAuth(
         `${API_URL}/student/courses?programme=${programme}&year=${year}`
       );
-
-      // console.log("Response:", response);
       const courses = await response.json();
       setCoursesData(courses[0].courses);
     } catch (error) {

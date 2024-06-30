@@ -5,10 +5,10 @@ import { ThemedView } from "../../contexts/ThemedView";
 import { ThemedText } from "../../contexts/ThemedText";
 import CustomForm from "../../components/Form";
 import KeyboardAvoidanceContainer from "../../components/KeyboardAvoidance";
-import { InputConfig } from "./SignUpScreen";
 import { API_URL } from "@env";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
+import { InputConfig } from "../../utils/types";
 
 const LogIn = () => {
   const inputConfigs: InputConfig[] = [

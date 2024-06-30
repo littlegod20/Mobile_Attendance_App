@@ -1,58 +1,69 @@
-import {
-  View,
-  Text,
-  ImageBackground,
-  ScrollView,
-  StatusBar,
-  FlatList,
-} from "react-native";
+import { View, ImageBackground, StatusBar, FlatList } from "react-native";
 import { ThemedView } from "../../contexts/ThemedView";
 import { ThemedText } from "../../contexts/ThemedText";
-import GoBackBtn from "../../components/GoBackBtn";
-import { AntDesign } from "@expo/vector-icons";
 import CustomDropDown from "../../components/CustomDropDown";
 import Weeks from "../../components/Weeks";
 import { useEffect, useState } from "react";
 import { API_URL } from "@env";
-
-type WeeksProps = {
-  week: string;
-  days: string[];
-  rating: string;
-  code: string;
-};
-[];
-
-type OptionsProps = {
-  label: string;
-  value: string;
-};
+import fetchWithAuth from "../../services/fetchWithAuth";
+import * as SecureStore from "expo-secure-store";
+import { CourseData, Option, User, WeeksProps } from "../../utils/types";
 
 export default function History() {
+  const [user, setUser] = useState<User | null>(null);
   const [weeks, setWeeks] = useState<WeeksProps[]>([]);
-  const [options, setOptions] = useState<OptionsProps[]>([]);
-  const [selectedOption, setSelectedOption] = useState<OptionsProps>();
+  const [options, setOptions] = useState<Option[]>([]);
+  const [selectedOption, setSelectedOption] = useState<Option>();
 
   useEffect(() => {
-    // fetchHistory();client/screens/studentScreens/HistoryScreen.tsx
-    fetchOptions();
+    fetchUserData();
   }, []);
 
-  // Fetching data from server
+  useEffect(() => {
+    if (user) {
+      fetchOptions();
+    }
+  }, [user]);
+
+  const fetchUserData = async () => {
+    try {
+      const programme = await SecureStore.getItemAsync("programme");
+      const year = await SecureStore.getItemAsync("year");
+
+      if (programme && year) {
+        setUser({
+          programme,
+          year,
+        });
+      } else {
+        console.error("Some user data is missing from secure storage");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
   const fetchOptions = async () => {
     try {
-      const response = await fetch(`${API_URL}/student_options`);
+      const response = await fetchWithAuth(
+        `${API_URL}/student/courses?programme=${user?.programme}&year=${user?.year}`
+      );
       const data = await response.json();
-      setOptions(data);
+      setOptions(
+        data[0].courses.map((course: CourseData) => ({
+          label: course.course_name,
+          value: course.course_code,
+        }))
+      );
     } catch (error) {
       console.error("Failed to fetch student course options", error);
     }
   };
 
-  const handleOptionSelect = async (option: OptionsProps) => {
+  const handleOptionSelect = async (option: Option) => {
     try {
-      const response = await fetch(
-        `${API_URL}/student/attendance?${option.value}`
+      const response = await fetchWithAuth(
+        `${API_URL}/student/attendance?course_code=${option.value}&course_name=${option.label}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch option value");
@@ -60,8 +71,6 @@ export default function History() {
       const data = await response.json();
       setSelectedOption(option);
       setWeeks(data);
-      // console.log(data);
-      // console.log("Weeks Data:", weeks);
     } catch (error) {
       console.error(
         "Failed to fetch student's data for selected options:",
@@ -80,7 +89,7 @@ export default function History() {
           <CustomDropDown
             options={options}
             options_type="Programme"
-            onSelectOption={handleOptionSelect}
+            onSelectOption2={handleOptionSelect}
             selectedOption={selectedOption}
           />
         </View>
@@ -92,9 +101,9 @@ export default function History() {
             renderItem={({ item }) => (
               <Weeks
                 week={item.week}
-                days={item.days}
-                rating={item.rating}
+                attendance={item.attendance}
                 code={item.code}
+                // attendance_fraction={item.attendance_fraction}
               />
             )}
             showsVerticalScrollIndicator={false}

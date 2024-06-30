@@ -1,48 +1,41 @@
 import React from "react";
 import { View } from "react-native";
 import { ThemedText } from "../contexts/ThemedText";
+import { WeeksProps } from "../utils/types";
 
-interface Day {
-  date: string;
-  value: string;
-}
-
-interface WeeksProps {
-  week: string;
-  days: string[];
-  rating: string;
-  code?: string;
-}
-
-const Weeks: React.FC<WeeksProps> = ({ week, days, rating, code }) => {
+const Weeks: React.FC<WeeksProps> = ({
+  week,
+  attendance,
+  code,
+  attendance_fraction,
+}) => {
   return (
     <View className="h-28 items-center flex flex-row justify-between border-t-2 border-gray-400">
       <View className="w-4/5 h-3/4 items-start flex justify-evenly">
-        <ThemedText type="subtitle">{week}</ThemedText>
-
-        <View className="flex flex-row w-full justify-evenly">
-          {days.map((item, index) => (
-            <ThemedText key={index}>{item}</ThemedText>
-          ))}
-        </View>
+        <ThemedText type="subtitle">Week {week}</ThemedText>
+        {/* <View>
+          <ThemedText>
+            {attendance_fraction && (attendance_fraction * 100).toFixed(0)} %
+          </ThemedText>
+        </View> */}
       </View>
 
       {code === "yellow" ? (
         <View className="bg-yellow-500 p-3 rounded-lg">
           <ThemedText type="smallbold" style={{ color: "white" }}>
-            {rating}
+            {attendance}
           </ThemedText>
         </View>
       ) : code === "red" ? (
         <View className="bg-red-600 p-3 rounded-lg">
           <ThemedText type="smallbold" style={{ color: "white" }}>
-            {rating}
+            {attendance}
           </ThemedText>
         </View>
       ) : (
         <View className="bg-green-600 p-3 rounded-lg ">
           <ThemedText type="smallbold" style={{ color: "white" }}>
-            {rating}
+            {attendance}
           </ThemedText>
         </View>
       )}

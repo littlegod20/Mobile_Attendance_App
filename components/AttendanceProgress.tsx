@@ -1,9 +1,10 @@
 import React from "react";
 import { View, Dimensions } from "react-native";
-import { carousel, CarouselProps } from "../data";
+import { carousel } from "../data";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 import { ThemedText } from "../contexts/ThemedText";
 import { ThemedView } from "../contexts/ThemedView";
+import { CarouselProps } from "../utils/types";
 
 export const { width } = Dimensions.get("window");
 
