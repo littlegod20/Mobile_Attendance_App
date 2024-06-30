@@ -44,7 +44,7 @@ type Course = {
 type Recents = {
   course_name: string;
   course_code: string;
-  time: string;
+  timestamp: string;
 };
 
 const Home: React.FC = () => {
@@ -175,7 +175,7 @@ const Home: React.FC = () => {
               renderItem={({ item }) => (
                 <RecentCard
                   course_code={item.course_code}
-                  time={item.time}
+                  time={item.timestamp}
                   course_name={item.course_name}
                 />
               )}
