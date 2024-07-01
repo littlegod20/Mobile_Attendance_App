@@ -18,6 +18,7 @@ import CustomForm from "../../components/Form";
 import KeyboardAvoidanceContainer from "../../components/KeyboardAvoidance";
 import * as SecureStore from "expo-secure-store";
 import { User } from "../../utils/types";
+import { ActivityIndicator } from "react-native";
 
 const tabs = [
   {
@@ -41,6 +42,8 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState(1);
   const scrollX = useRef(new Animated.Value(0)).current;
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     fetchUserData();
@@ -48,6 +51,7 @@ export default function Profile() {
 
   const fetchUserData = async () => {
     try {
+      setIsLoading(true);
       const name = await SecureStore.getItemAsync("name");
       const email = await SecureStore.getItemAsync("email");
       const password = await SecureStore.getItemAsync("password");
@@ -90,6 +94,9 @@ export default function Profile() {
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
+      setError(error instanceof Error ? error : new Error(String(error)));
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -157,14 +164,22 @@ export default function Profile() {
         )}
         scrollEventThrottle={16}
       >
-        <View style={{ width: width }}>
-          {/* Contact Section */}
-          <DetailForm
-            name={user?.name}
-            email={user?.email}
-            password={user?.password}
-          />
-        </View>
+        {isLoading ? (
+          <View className="flex-1 flex justify-center items-center">
+            <ActivityIndicator size="large" color="#A66d37" />
+          </View>
+        ) : error ? (
+          <ThemedText>Error: {error.message} </ThemedText>
+        ) : (
+          <View style={{ width: width }}>
+            {/* Contact Section */}
+            <DetailForm
+              name={user?.name}
+              email={user?.email}
+              password={user?.password}
+            />
+          </View>
+        )}
 
         <View style={{ width: width }}>
           <DetailForm
