@@ -7,7 +7,7 @@ import {
   UserRegistrationData,
   useUserRegistration,
 } from "../../components/UserRegistrationData";
-import { faculty, programme, yearOfStudy } from "../../data";
+import { faculty, programme, yearOfStudy } from "../../utils/data";
 
 const Faculty_DeptScreen = () => {
   const { updateUserData, submitRegistration, userData } =

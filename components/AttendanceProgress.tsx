@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Dimensions } from "react-native";
-import { carousel } from "../data";
+import { carousel } from "../utils/data";
 import Carousel, { Pagination } from "react-native-snap-carousel";
 import { ThemedText } from "../contexts/ThemedText";
 import { ThemedView } from "../contexts/ThemedView";

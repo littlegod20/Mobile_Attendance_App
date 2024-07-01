@@ -25,6 +25,10 @@ export default function History() {
     }
   }, [user]);
 
+  useEffect(() => {
+    console.log("Updating options:", options);
+  }, [options]);
+
   const fetchUserData = async () => {
     try {
       const programme = await SecureStore.getItemAsync("programme");
@@ -49,8 +53,9 @@ export default function History() {
         `${API_URL}/student/courses?programme=${user?.programme}&year=${user?.year}`
       );
       const data = await response.json();
+      console.log("data:", data);
       setOptions(
-        data[0].courses.map((course: CourseData) => ({
+        data.map((course: CourseData) => ({
           label: course.course_name,
           value: course.course_code,
         }))

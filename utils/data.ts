@@ -1,4 +1,4 @@
-import { CarouselProps } from "./utils/types";
+import { CarouselProps } from "./types";
 
 export const carousel: CarouselProps[] = [
   {
