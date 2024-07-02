@@ -58,13 +58,20 @@ const LogIn = () => {
         await SecureStore.setItemAsync("name", data.user.name);
         await SecureStore.setItemAsync("programme", data.user.programme);
         await SecureStore.setItemAsync("role", data.user.role);
-        await SecureStore.setItemAsync("school_id", data.user.school_id);
-        await SecureStore.setItemAsync("year", data.user.year);
+        await SecureStore.setItemAsync(
+          "school_id",
+          String(data.user.school_id)
+        ); // Convert to string
+        await SecureStore.setItemAsync("year", String(data.user.year)); // Convert to string
         await SecureStore.setItemAsync("password", data.user.password);
 
         console.log("Login successful");
         // Redirect user or update UI to reflect logged-in state
-        router.navigate({ pathname: "/shared_screens/forgot_password" });
+        if (data.user.role === "student") {
+          router.navigate({ pathname: "/shared_screens/forgot_password" });
+        } else {
+          router.navigate({ pathname: "/lecturer/LecturerMain/(tabs)" });
+        }
       } else {
         console.error("Login failed: No token received");
       }

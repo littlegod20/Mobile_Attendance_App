@@ -39,10 +39,10 @@ export interface User {
   email?: string;
   faculty?: string;
   name?: string;
-  programme: string;
+  programme?: string;
   role?: string;
   school_id?: string;
-  year: string;
+  year?: string;
   password?: string;
 }
 

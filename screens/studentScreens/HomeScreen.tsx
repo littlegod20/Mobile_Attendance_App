@@ -25,13 +25,13 @@ import * as SecureStore from "expo-secure-store";
 import fetchWithAuth from "../../services/fetchWithAuth";
 import { User } from "../../utils/types";
 
-type Course = {
+export type Course = {
   course_name: string;
   course_code: string;
   credits: string;
 };
 
-type Recents = {
+export type Recents = {
   course_name: string;
   course_code: string;
   timestamp: string;
@@ -54,20 +54,18 @@ const Home: React.FC = () => {
   useEffect(() => {
     if (user) {
       fetchRecentsData();
-      fetchCoursesData(user.programme, user.year);
+      fetchCoursesData(
+        user.programme ? user.programme : "",
+        user.year ? user.year : ""
+      );
     }
   }, [user]);
 
   // useEffect(() => {
-  //   console.log("Updated courses data:", coursesData);
-  //   // console.log("Updated recents data:", recentData);
-  // }, [coursesData]);
-
-  useEffect(() => {
-    console.log("Courses loading:", isCoursesLoading);
-    console.log("Courses data:", coursesData);
-    console.log("Courses error:", coursesError);
-  }, [isCoursesLoading, coursesData, coursesError]);
+  //   console.log("Courses loading:", isCoursesLoading);
+  //   console.log("Courses data:", coursesData);
+  //   console.log("Courses error:", coursesError);
+  // }, [isCoursesLoading, coursesData, coursesError]);
 
   const fetchUserData = async () => {
     try {

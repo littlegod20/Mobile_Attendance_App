@@ -80,17 +80,6 @@ export default function Profile() {
         });
       } else {
         console.error("Some user data is missing from secure storage");
-        console.log(
-          "SecureData:",
-          programme,
-          year,
-          name,
-          email,
-          school_id,
-          faculty,
-          year,
-          password
-        );
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -131,7 +120,7 @@ export default function Profile() {
         />
         <View className="flex  ml-3">
           <ThemedText type="defaultSemiBold" className="uppercase">
-            <Text>{user?.name?.split(" ")[0]}</Text>
+            {user?.name?.split(" ")[0]}
           </ThemedText>
 
           <ThemedText type="mediumRegular" className="uppercase">

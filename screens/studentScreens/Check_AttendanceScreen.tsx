@@ -69,7 +69,10 @@ const Check_AttendanceScreen = () => {
   // Use the fetched data
   useEffect(() => {
     if (user) {
-      fetchCoursesSession(user.programme, user.year);
+      fetchCoursesSession(
+        user.programme ? user.programme : "",
+        user.year ? user.year : ""
+      );
     }
   }, [user]);
 
@@ -100,7 +103,6 @@ const Check_AttendanceScreen = () => {
       );
 
       const data = await response.json();
-      // Set the courses data to state
       console.log("Response:", data);
       setCourseSession(data);
     } catch (error) {

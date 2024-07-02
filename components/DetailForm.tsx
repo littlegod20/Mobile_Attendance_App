@@ -13,7 +13,7 @@ type DetailFormProps = {
   programme?: string;
   year?: string;
   staffId?: number;
-  serialNo?: number;
+  serialNo?: string;
   department?: string;
 };
 
