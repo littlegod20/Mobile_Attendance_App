@@ -2,7 +2,7 @@ import { View, ImageBackground, StatusBar, FlatList } from "react-native";
 import { ThemedView } from "../../contexts/ThemedView";
 import { ThemedText } from "../../contexts/ThemedText";
 import CustomDropDown from "../../components/CustomDropDown";
-import Weeks from "../../components/Weeks";
+import Weeks from "./components/Weeks";
 import { useEffect, useState } from "react";
 import { API_URL } from "@env";
 import fetchWithAuth from "../../services/fetchWithAuth";

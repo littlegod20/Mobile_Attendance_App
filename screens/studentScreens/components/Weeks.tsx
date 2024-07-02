@@ -1,7 +1,7 @@
 import React from "react";
 import { View } from "react-native";
-import { ThemedText } from "../contexts/ThemedText";
-import { WeeksProps } from "../utils/types";
+import { ThemedText } from "../../../contexts/ThemedText";
+import { WeeksProps } from "../../../utils/types";
 
 const Weeks: React.FC<WeeksProps> = ({
   week,
