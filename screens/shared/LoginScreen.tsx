@@ -68,7 +68,7 @@ const LogIn = () => {
         console.log("Login successful");
         // Redirect user or update UI to reflect logged-in state
         if (data.user.role === "student") {
-          router.navigate({ pathname: "/shared_screens/forgot_password" });
+          router.navigate({ pathname: "/student/Main/(tabs)" });
         } else {
           router.navigate({ pathname: "/lecturer/LecturerMain/(tabs)" });
         }
@@ -94,7 +94,7 @@ const LogIn = () => {
       >
         <View className="h-1/4 p-[20px] flex flex-col justify-end  items-start w-full">
           <ThemedText type="title">Log in to your account</ThemedText>
-          <ThemedText type="smalldefault" className="text--300">
+          <ThemedText type="smalldefault" className="text-gray-300">
             Welcome, please enter your details
           </ThemedText>
         </View>
