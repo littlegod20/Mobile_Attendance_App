@@ -5,10 +5,10 @@ import { ThemedView } from "../../contexts/ThemedView";
 import { ThemedText } from "../../contexts/ThemedText";
 import CustomForm from "../../components/Form";
 import KeyboardAvoidanceContainer from "../../components/KeyboardAvoidance";
-import { InputConfig } from "./SignUpScreen";
 import { API_URL } from "@env";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
+import { InputConfig } from "../../utils/types";
 
 const LogIn = () => {
   const inputConfigs: InputConfig[] = [
@@ -54,16 +54,24 @@ const LogIn = () => {
         // storing the token in localStorage for persistence across page reloads
         await SecureStore.setItemAsync("authToken", data.access_token);
         await SecureStore.setItemAsync("email", data.user.email);
-        // await SecureStore.setItemAsync("faculty", data.user.faculty);
+        await SecureStore.setItemAsync("faculty", data.user.faculty);
         await SecureStore.setItemAsync("name", data.user.name);
         await SecureStore.setItemAsync("programme", data.user.programme);
         await SecureStore.setItemAsync("role", data.user.role);
-        // await SecureStore.setItemAsync("school_id", data.user.school_id);
-        await SecureStore.setItemAsync("year", data.user.year);
+        await SecureStore.setItemAsync(
+          "school_id",
+          String(data.user.school_id)
+        ); // Convert to string
+        await SecureStore.setItemAsync("year", String(data.user.year)); // Convert to string
+        await SecureStore.setItemAsync("password", data.user.password);
 
         console.log("Login successful");
         // Redirect user or update UI to reflect logged-in state
-        router.navigate({ pathname: "/shared_screens/forgot_password" });
+        if (data.user.role === "student") {
+          router.navigate({ pathname: "/student/Main/(tabs)" });
+        } else {
+          router.navigate({ pathname: "/lecturer/LecturerMain/(tabs)" });
+        }
       } else {
         console.error("Login failed: No token received");
       }
@@ -86,7 +94,7 @@ const LogIn = () => {
       >
         <View className="h-1/4 p-[20px] flex flex-col justify-end  items-start w-full">
           <ThemedText type="title">Log in to your account</ThemedText>
-          <ThemedText type="smalldefault" className="text--300">
+          <ThemedText type="smalldefault" className="text-gray-300">
             Welcome, please enter your details
           </ThemedText>
         </View>

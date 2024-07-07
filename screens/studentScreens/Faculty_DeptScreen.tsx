@@ -7,40 +7,12 @@ import {
   UserRegistrationData,
   useUserRegistration,
 } from "../../components/UserRegistrationData";
+import { faculty, programme, yearOfStudy } from "../../utils/data";
 
 const Faculty_DeptScreen = () => {
   const { updateUserData, submitRegistration, userData } =
     useUserRegistration();
   const router = useRouter();
-
-  const programme = [
-    {
-      label: "Telecommunication Engineering",
-      value: "Telecommunication Engineering",
-    },
-    { label: "Computer Engineering", value: "Computer Engineering" },
-    { label: "Electrical Engineering", value: "Electrical Engineering" },
-    { label: "Biomedical Engineering", value: "Biomedical Engineering" },
-  ];
-
-  const yearOfStudy = [
-    { label: "First Year", value: "1" },
-    { label: "Second Year", value: "2" },
-    { label: "Third Year", value: "3" },
-    { label: "Fourth Year", value: "4" },
-  ];
-
-  const faculty = [
-    {
-      label: "Faculty of Computer & Electrical Engineering",
-      value: "Faculty of Computer & Electrical Engineering",
-    },
-    { label: "Faculty of Science", value: "Faculty of Science" },
-    {
-      label: "Faculty of Mechanical & Automobile",
-      value: "Faculty of Mechanical & Automobile",
-    },
-  ];
 
   const handleDropdownChange = (
     type: keyof UserRegistrationData,
@@ -50,9 +22,7 @@ const Faculty_DeptScreen = () => {
   };
 
   const handleFinish = async () => {
-    console.log("Form data before submission:", userData);
     await submitRegistration();
-    console.log("Form data after submission:", userData);
     router.push("shared_screens/log_in");
   };
 
@@ -65,21 +35,21 @@ const Faculty_DeptScreen = () => {
         <CustomDropDown
           options={yearOfStudy}
           options_type="year"
-          onSelectOption={(type, option) =>
+          onSelectOption1={(type, option) =>
             handleDropdownChange(type as keyof UserRegistrationData, option)
           }
         />
         <CustomDropDown
           options={faculty}
           options_type="faculty"
-          onSelectOption={(type, option) =>
+          onSelectOption1={(type, option) =>
             handleDropdownChange(type as keyof UserRegistrationData, option)
           }
         />
         <CustomDropDown
           options={programme}
           options_type="programme"
-          onSelectOption={(type, option) =>
+          onSelectOption1={(type, option) =>
             handleDropdownChange(type as keyof UserRegistrationData, option)
           }
         />

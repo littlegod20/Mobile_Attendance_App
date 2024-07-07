@@ -8,14 +8,7 @@ import {
   useUserRegistration,
   UserRegistrationData,
 } from "../../components/UserRegistrationData";
-
-export interface InputConfig {
-  name: keyof UserRegistrationData;
-  placeholder: string;
-  keyboardType?: KeyboardTypeOptions;
-  secureTextEntry?: boolean;
-  multiline?: boolean;
-}
+import { InputConfig } from "../../utils/types";
 
 const SignUp = () => {
   const { updateUserData } = useUserRegistration();

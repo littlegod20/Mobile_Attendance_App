@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { UserRegistrationProvider } from "../components/UserRegistrationData";
+import { CourseSessionProvider } from "../contexts/CoursesSessionContext";
 
 // Prevent the splash screen from auto hiding
 SplashScreen.preventAutoHideAsync();
@@ -53,7 +54,9 @@ const RootLayout = () => {
   return (
     <React.StrictMode>
       <UserRegistrationProvider>
-        <Slot />
+        <CourseSessionProvider>
+          <Slot />
+        </CourseSessionProvider>
       </UserRegistrationProvider>
     </React.StrictMode>
   );

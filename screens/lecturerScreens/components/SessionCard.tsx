@@ -1,30 +1,35 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
-import { ThemedText } from "../contexts/ThemedText";
-import { useRouter } from "expo-router";
+import { ThemedText } from "../../../contexts/ThemedText";
 
-export type CheckAttendanceCardProps = {
+export interface SessionCardProps {
   course_code: string;
   course_name: string;
-  action: string;
-};
+  isOpen: boolean;
+  onToggleSession: (
+    course_code: string,
+    course_name: string,
+    action: "open" | "close"
+  ) => void;
+}
 
-const CheckAttendanceCard = ({
+const SessionCard: React.FC<SessionCardProps> = ({
   course_code,
   course_name,
-  action,
-}: CheckAttendanceCardProps) => {
-  const router = useRouter();
+  isOpen,
+  onToggleSession,
+}) => {
+  const handlePress = () => {
+    const action = isOpen ? "close" : "open";
+    onToggleSession(course_code, course_name, action);
+  };
+
   return (
-    <TouchableOpacity
-      onPress={() =>
-        action === "open" ? router.navigate("student/Main/settings") : null
-      }
-    >
+    <TouchableOpacity onPress={handlePress}>
       <View className="w-full flex mb-4 flex-row gap-3">
         <View
           className={`w-[65%] bg-coffee flex h-28 ${
-            action === "open" ? "" : "opacity-50"
+            isOpen ? "opacity-50" : ""
           } items-center justify-center rounded-lg`}
         >
           <ThemedText
@@ -38,14 +43,14 @@ const CheckAttendanceCard = ({
 
         <View
           className={`flex-1 ${
-            action === "open" ? "" : "opacity-50"
+            isOpen ? "opacity-50" : ""
           } bg-coffee flex items-center justify-center rounded-lg`}
         >
-          <ThemedText className="text-center flex" style={{ color: "white" }}>
-            Session
-          </ThemedText>
           <ThemedText style={{ color: "white" }}>
-            {action === "open" ? "opened" : "closed"}
+            {isOpen ? "Close" : "Open"}
+          </ThemedText>
+          <ThemedText className="text-center flex" style={{ color: "white" }}>
+            session
           </ThemedText>
         </View>
       </View>
@@ -53,4 +58,4 @@ const CheckAttendanceCard = ({
   );
 };
 
-export default CheckAttendanceCard;
+export default SessionCard;

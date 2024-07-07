@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Modal,
   ImageBackground,
+  ActivityIndicator,
 } from "react-native";
 import { Avatar } from "react-native-paper";
 import { ThemedText } from "../../contexts/ThemedText";
@@ -18,40 +19,33 @@ import { FlatList } from "react-native";
 import { useState, useRef, useEffect } from "react";
 import TimeTableCourse from "../../components/TimeTableCourse";
 import { TouchableWithoutFeedback } from "react-native";
-import { cards } from "../../data";
 import CarouselCardItem from "../../components/AttendanceProgress";
 import { API_URL } from "@env";
 import * as SecureStore from "expo-secure-store";
 import fetchWithAuth from "../../services/fetchWithAuth";
+import { User } from "../../utils/types";
 
-// Define the User type
-interface User {
-  email?: string;
-  faculty?: string;
-  name?: string;
-  programme: string;
-  role?: string;
-  school_id?: string;
-  year: string;
-}
-
-type Course = {
+export type Course = {
   course_name: string;
   course_code: string;
   credits: string;
 };
 
-type Recents = {
+export type Recents = {
   course_name: string;
   course_code: string;
-  time: string;
+  timestamp: string;
 };
 
 const Home: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [coursesData, setCoursesData] = useState<Course[]>([]);
+  const [isCoursesLoading, setIsCoursesLoading] = useState<boolean>(true);
+  const [coursesError, setCoursesError] = useState<Error | null>(null);
   const [recentData, setRecentData] = useState<Recents[]>([]);
+  const [isRecentLoading, setIsRecentLoading] = useState<boolean>(true);
+  const [recentError, setRecentError] = useState<Error | null>(null);
 
   useEffect(() => {
     fetchUserData();
@@ -60,28 +54,34 @@ const Home: React.FC = () => {
   useEffect(() => {
     if (user) {
       fetchRecentsData();
-      fetchCoursesData(user.programme, user.year);
+      fetchCoursesData(
+        user.programme ? user.programme : "",
+        user.year ? user.year : ""
+      );
     }
   }, [user]);
 
-  useEffect(() => {
-    console.log("Updated courses data:", coursesData);
-    console.log("Updated recents data:", recentData);
-  }, [coursesData, recentData]);
+  // useEffect(() => {
+  //   console.log("Courses loading:", isCoursesLoading);
+  //   console.log("Courses data:", coursesData);
+  //   console.log("Courses error:", coursesError);
+  // }, [isCoursesLoading, coursesData, coursesError]);
 
   const fetchUserData = async () => {
     try {
       const programme = await SecureStore.getItemAsync("programme");
       const year = await SecureStore.getItemAsync("year");
+      const name = await SecureStore.getItemAsync("name");
 
-      if (programme && year) {
+      if (programme && year && name) {
         setUser({
           programme,
           year,
+          name,
         });
       } else {
         console.error("Some user data is missing from secure storage");
-        console.log("SecureData:", programme, year);
+        // console.log("SecureData:", programme, year);
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -90,20 +90,26 @@ const Home: React.FC = () => {
 
   const fetchCoursesData = async (programme: string, year: string) => {
     try {
+      setIsCoursesLoading(true);
       const response = await fetchWithAuth(
         `${API_URL}/student/courses?programme=${programme}&year=${year}`
       );
-
-      // console.log("Response:", response);
       const courses = await response.json();
-      setCoursesData(courses[0].courses);
+      console.log("Fetched courses:", courses);
+      setCoursesData(courses);
     } catch (error) {
       console.error("Error fetching courses data:", error);
+      setCoursesError(
+        error instanceof Error ? error : new Error(String(error))
+      );
+    } finally {
+      setIsCoursesLoading(false);
     }
   };
 
   const fetchRecentsData = async () => {
     try {
+      setIsRecentLoading(true);
       const response = await fetchWithAuth(`${API_URL}/`);
       const recents = await response.json();
 
@@ -118,7 +124,10 @@ const Home: React.FC = () => {
       }
     } catch (error) {
       console.error("Error fetching recents data:", error);
+      setRecentError(error instanceof Error ? error : new Error(String(error)));
       setRecentData([]);
+    } finally {
+      setIsRecentLoading(false);
     }
   };
 
@@ -139,10 +148,17 @@ const Home: React.FC = () => {
           theme={darkTheme}
         />
         <View className="ml-3">
-          <ThemedText type="subtitle" style={{ fontSize: 25 }}>
+          <ThemedText type="subtitle" style={{ fontSize: 20 }}>
             Hello
           </ThemedText>
-          <ThemedText type="default">AKWASI NTIM</ThemedText>
+          <ThemedText
+            type="defaultSemiBold"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            className="w-44"
+          >
+            {user?.name}
+          </ThemedText>
         </View>
       </View>
 
@@ -169,13 +185,19 @@ const Home: React.FC = () => {
           <TouchableOpacity onPress={toggleMenu} style={styles.iconContainer}>
             <FontAwesome5 name="book-reader" size={24} color="white" />
           </TouchableOpacity>
-          {recentData && recentData.length > 0 ? (
+          {isRecentLoading ? (
+            <View className="flex-1 flex justify-center items-center">
+              <ActivityIndicator size="large" color="#A66d37" />
+            </View>
+          ) : recentError ? (
+            <ThemedText>Error: {recentError.message}</ThemedText>
+          ) : recentData && recentData.length > 0 ? (
             <FlatList
               data={recentData}
               renderItem={({ item }) => (
                 <RecentCard
                   course_code={item.course_code}
-                  time={item.time}
+                  time={item.timestamp}
                   course_name={item.course_name}
                 />
               )}
@@ -204,9 +226,16 @@ const Home: React.FC = () => {
                   <ThemedText type="subtitle" className="uppercase mb-8">
                     Courses
                   </ThemedText>
-                  <ScrollView>
-                    {coursesData &&
-                      coursesData.map((item, index) => (
+
+                  {isCoursesLoading ? (
+                    <View className="flex-1 flex justify-center items-center">
+                      <ActivityIndicator size="large" color="#A66d37" />
+                    </View>
+                  ) : coursesError ? (
+                    <ThemedText>Error: {coursesError.message}</ThemedText>
+                  ) : coursesData.length > 0 ? (
+                    <ScrollView>
+                      {coursesData.map((item, index) => (
                         <TimeTableCourse
                           course_name={item.course_name}
                           course_code={item.course_code}
@@ -214,7 +243,15 @@ const Home: React.FC = () => {
                           key={index}
                         />
                       ))}
-                  </ScrollView>
+                    </ScrollView>
+                  ) : (
+                    <ThemedText
+                      type="mediumSemi"
+                      className="text-gray-500 italic"
+                    >
+                      No courses available
+                    </ThemedText>
+                  )}
                 </ImageBackground>
               </View>
             </TouchableWithoutFeedback>

@@ -6,7 +6,6 @@ type TimeTableCourseProps = {
   course_name: string;
   course_code: string;
   credits: string;
-  // finish_time?: string;
 };
 
 const TimeTableCourse = ({

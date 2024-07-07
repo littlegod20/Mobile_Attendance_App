@@ -20,15 +20,20 @@ const KeyboardAvoidanceContainer: React.FC<KeyboardAvoidanceContainerProps> = ({
   return (
     <SafeAreaView className="flex-1 w-full">
       <KeyboardAvoidingView
-        className="flex-1"
+        className="flex-1 w-full "
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={10}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <TouchableWithoutFeedback
+          onPress={Keyboard.dismiss}
+          accessible={false}
+          style={{ flex: 1, backgroundColor: "pink", width: "100%" }}
+        >
           <ScrollView
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             // style={styles.contentContainer}
+            className="flex-1 w-full"
           >
             {children}
           </ScrollView>

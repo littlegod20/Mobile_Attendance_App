@@ -11,11 +11,14 @@ import GoBackBtn from "../../components/GoBackBtn";
 import { ThemedText } from "../../contexts/ThemedText";
 import { Avatar } from "react-native-paper";
 import { darkTheme } from "../../themes/themes";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import CenterTabBar from "../../components/CenterTab";
 import DetailForm from "../../components/DetailForm";
 import CustomForm from "../../components/Form";
 import KeyboardAvoidanceContainer from "../../components/KeyboardAvoidance";
+import * as SecureStore from "expo-secure-store";
+import { User } from "../../utils/types";
+import { ActivityIndicator } from "react-native";
 
 const tabs = [
   {
@@ -32,18 +35,65 @@ const tabs = [
   },
 ];
 
-const inputConfigs = [
-  { name: "Name", placeholder: "Surname Firstname" },
-  { name: "Email", placeholder: "Enter your email" },
-  { name: "Password", placeholder: "Enter your password" },
-];
-
 const { width } = Dimensions.get("window");
 
 export default function Profile() {
   const scrollViewRef = useRef<ScrollView>(null);
   const [activeTab, setActiveTab] = useState(1);
   const scrollX = useRef(new Animated.Value(0)).current;
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      setIsLoading(true);
+      const name = await SecureStore.getItemAsync("name");
+      const email = await SecureStore.getItemAsync("email");
+      const password = await SecureStore.getItemAsync("password");
+      const school_id = await SecureStore.getItemAsync("school_id");
+      const faculty = await SecureStore.getItemAsync("faculty");
+      const programme = await SecureStore.getItemAsync("programme");
+      const year = await SecureStore.getItemAsync("year");
+
+      if (
+        programme &&
+        year &&
+        name &&
+        email &&
+        password &&
+        school_id &&
+        faculty
+      ) {
+        setUser({
+          name,
+          email,
+          password,
+          school_id,
+          faculty,
+          programme,
+          year,
+        });
+      } else {
+        console.error("Some user data is missing from secure storage");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      setError(error instanceof Error ? error : new Error(String(error)));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const inputConfigs = [
+    { name: "Name", placeholder: user?.name },
+    { name: "Email", placeholder: user?.email },
+    { name: "Password", placeholder: "Enter your new password" },
+  ];
 
   const handleTabPress = (tabId: number) => {
     setActiveTab(tabId);
@@ -59,6 +109,7 @@ export default function Profile() {
   const handleSaveDetails = (formValues: { [key: string]: string }) => {
     console.log("Saving Details:", formValues);
   };
+
   return (
     <ThemedView className="flex-1 w-full ">
       <View className="w-full mb-8 flex flex-row p-4 items-center ">
@@ -69,11 +120,11 @@ export default function Profile() {
         />
         <View className="flex  ml-3">
           <ThemedText type="defaultSemiBold" className="uppercase">
-            <Text>Amaame</Text>
+            {user?.name?.split(" ")[0]}
           </ThemedText>
 
           <ThemedText type="mediumRegular" className="uppercase">
-            Isaac Junior Litty
+            {user?.name?.split(" ").slice(1).join(" ")}
           </ThemedText>
         </View>
       </View>
@@ -102,21 +153,28 @@ export default function Profile() {
         )}
         scrollEventThrottle={16}
       >
-        <View style={{ width: width }}>
-          {/* Contact Section */}
-          <DetailForm
-            name="Kwaku Amaame Osei"
-            email="kwakua023@gmail.com"
-            password="****"
-          />
-        </View>
+        {isLoading ? (
+          <View className="flex-1 flex justify-center items-center">
+            <ActivityIndicator size="large" color="#A66d37" />
+          </View>
+        ) : error ? (
+          <ThemedText>Error: {error.message} </ThemedText>
+        ) : (
+          <View style={{ width: width }}>
+            {/* Contact Section */}
+            <DetailForm
+              name={user?.name}
+              email={user?.email}
+              password={user?.password}
+            />
+          </View>
+        )}
 
         <View style={{ width: width }}>
           <DetailForm
-            studentId={302230}
-            indexNo={4032344}
-            programme="Bsc. Telecommunication Eng."
-            year="Three (3)"
+            studentId={user?.school_id}
+            programme={user?.programme}
+            year={user?.year}
           />
         </View>
 
