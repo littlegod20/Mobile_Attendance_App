@@ -25,9 +25,9 @@ export default function History() {
     }
   }, [user]);
 
-  useEffect(() => {
-    console.log("Updating options:", options);
-  }, [options]);
+  // useEffect(() => {
+  //   console.log("Updating options:", options);
+  // }, [options]);
 
   const fetchUserData = async () => {
     try {
