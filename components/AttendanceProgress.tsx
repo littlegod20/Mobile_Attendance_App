@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Dimensions } from "react-native";
 import { carousel } from "../utils/data";
-import Carousel, { Pagination } from "react-native-snap-carousel";
+import Carousel from "react-native-snap-carousel";
 import { ThemedText } from "../contexts/ThemedText";
 import { ThemedView } from "../contexts/ThemedView";
 import { CarouselProps } from "../utils/types";
@@ -29,7 +29,7 @@ const CarouselCardItem = () => {
   return (
     <View className="h-full  flex flex-col">
       <View className="bg-[#ddd1c5] rounded-lg opacity-90 h-[130px] ">
-        <Carousel
+        {/* <Carousel
           // layout="tinder"
           ref={isCarousel}
           data={carousel}
@@ -39,10 +39,11 @@ const CarouselCardItem = () => {
           vertical={false}
           useScrollView={true}
           onSnapToItem={(index) => setIndex(index)}
-        />
+        /> */}
+        <ThemedText>Carousel Place holder</ThemedText>
       </View>
 
-      <Pagination
+      {/* <Pagination
         dotsLength={carousel.length}
         activeDotIndex={index}
         carouselRef={isCarousel}
@@ -56,7 +57,7 @@ const CarouselCardItem = () => {
         inactiveDotOpacity={0.6}
         tappableDots={true}
         containerStyle={{ marginTop: -10 }}
-      />
+      /> */}
     </View>
   );
 };
