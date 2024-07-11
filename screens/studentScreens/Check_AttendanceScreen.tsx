@@ -15,6 +15,8 @@ import { API_URL } from "@env";
 import { User } from "../../utils/types";
 import * as SecureStore from "expo-secure-store";
 import * as LocalAuthentication from "expo-local-authentication";
+import { LocationObjectCoords } from "expo-location";
+import { LocationCoords } from "../lecturerScreens/Open_Close_Session";
 
 interface CourseSessionProps {
   course_name: string;
@@ -72,7 +74,6 @@ const Check_AttendanceScreen = () => {
       );
 
       const data = await response.json();
-      console.log("Response:", data);
       setCourseSession(data);
     } catch (error) {
       console.error("Error fetching sessions data:", error);
@@ -129,18 +130,27 @@ const Check_AttendanceScreen = () => {
 
   const checkAttendance = async (course_code: string, course_name: string) => {
     try {
+      // Replace these placeholder values with actual latitude and longitude
+      const location: LocationCoords = {
+        latitude: 37.7749,
+        longitude: -122.4194,
+      };
+
+      // use this second placeholder to test the distance from the lecturer
+      const location2: LocationCoords = {
+        latitude: 34.0522,
+        longitude: -118.2437,
+      };
+
       const response = await fetchWithAuth(`${API_URL}/attendance`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          course_code: course_code,
-          course_name: course_name,
-          location: {
-            lat: 37.7749, // Replace with actual latitude
-            long: -122.4194, // Replace with actual longitude
-          },
+          course_code,
+          course_name,
+          location,
         }),
       });
 
@@ -154,14 +164,16 @@ const Check_AttendanceScreen = () => {
       }
 
       const data = await response.json();
-      if (data.msg) {
+      if (data.msg === "Attendance recorded successfully") {
         Alert.alert("Attendance checked successfully!");
-      } else {
+        console.log(data.msg);
+      } else if (data.msg === "You are not within the required location") {
         Alert.alert("Failed to check attendance. Please try again.");
+        console.log("Reason:", data.msg);
       }
     } catch (error) {
       console.error("Error checking attendance:", error);
-      Alert.alert("Error checking attendance. Please try again.");
+      // Alert.alert("Error checking attendance. Please try again.");
     }
   };
 

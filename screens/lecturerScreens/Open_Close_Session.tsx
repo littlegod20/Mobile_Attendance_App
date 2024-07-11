@@ -3,6 +3,7 @@ import {
   ImageBackground,
   FlatList,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ThemedView } from "../../contexts/ThemedView";
@@ -14,7 +15,7 @@ import { useCourseSession } from "../../contexts/CoursesSessionContext";
 import SessionCard from "./components/SessionCard";
 import getLocation from "../../utils/locationService";
 
-type LocationCoords = {
+export type LocationCoords = {
   latitude: number;
   longitude: number;
 } | null;
@@ -29,6 +30,21 @@ const Open_Closed_Session: React.FC = () => {
     try {
       const loc = await getLocation();
       setLocation(loc);
+      const response = await fetchWithAuth(`${API_URL}/lecturer/location`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          location: loc,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Lecturer location was not set");
+      }
+
+      Alert.alert("Location set. You are good to go!");
     } catch (error) {
       console.error("Error getting location:", error);
       // alert("Error getting location: " + error.message);
