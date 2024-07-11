@@ -8,12 +8,14 @@ import { API_URL } from "@env";
 import fetchWithAuth from "../../services/fetchWithAuth";
 import * as SecureStore from "expo-secure-store";
 import { CourseData, Option, User, WeeksProps } from "../../utils/types";
+import { ActivityIndicator } from "react-native";
 
 export default function History() {
   const [user, setUser] = useState<User | null>(null);
   const [weeks, setWeeks] = useState<WeeksProps[]>([]);
   const [options, setOptions] = useState<Option[]>([]);
   const [selectedOption, setSelectedOption] = useState<Option>();
+  const [studentHistory, setStudentHistory] = useState<boolean>(false);
 
   useEffect(() => {
     fetchUserData();
@@ -67,6 +69,7 @@ export default function History() {
 
   const handleOptionSelect = async (option: Option) => {
     try {
+      setStudentHistory(true);
       const response = await fetchWithAuth(
         `${API_URL}/student/attendance?course_code=${option.value}&course_name=${option.label}`
       );
@@ -81,6 +84,8 @@ export default function History() {
         "Failed to fetch student's data for selected options:",
         error
       );
+    } finally {
+      setStudentHistory(false);
     }
   };
 
@@ -100,7 +105,11 @@ export default function History() {
         </View>
 
         <View className="p-3"></View>
-        {weeks.length > 0 ? (
+        {studentHistory ? (
+          <View className="flex-1 flex justify-center items-center">
+            <ActivityIndicator size="large" color="#A66d37" />
+          </View>
+        ) : weeks.length > 0 ? (
           <FlatList
             data={weeks}
             renderItem={({ item }) => (
