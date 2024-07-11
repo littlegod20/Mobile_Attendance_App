@@ -17,6 +17,10 @@
         "image": "./assets/images/splash.png",
         "resizeMode": "cover",
         "backgroundColor": "#ffffff"
+      },
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "We need your location to provide better services.",
+        "NSLocationAlwaysUsageDescription": "We need your location to provide better services."
       }
     },
     "android": {
@@ -28,20 +32,15 @@
         "image": "./assets/images/splash.png",
         "resizeMode": "cover",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
     },
     "web": {
       "bundler": "metro",
       "favicon": "/assets/images/favicon.pngy"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "plugins": [
-      "expo-router",
-      "expo-font",
-      "expo-secure-store"
-    ],
+    "assetBundlePatterns": ["**/*"],
+    "plugins": ["expo-router", "expo-font", "expo-secure-store"],
     "scheme": "attendance-checker",
     "runtimeVersion": "1.0.0"
   }

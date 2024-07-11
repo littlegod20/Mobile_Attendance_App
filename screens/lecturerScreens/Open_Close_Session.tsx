@@ -12,11 +12,36 @@ import fetchWithAuth from "../../services/fetchWithAuth";
 import { API_URL } from "@env";
 import { useCourseSession } from "../../contexts/CoursesSessionContext";
 import SessionCard from "./components/SessionCard";
+import getLocation from "../../utils/locationService";
+
+type LocationCoords = {
+  latitude: number;
+  longitude: number;
+} | null;
 
 const Open_Closed_Session: React.FC = () => {
   const { courses, updateCourseAction } = useCourseSession();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
+  const [location, setLocation] = useState<LocationCoords>(null);
+
+  const fetchLocation = async () => {
+    try {
+      const loc = await getLocation();
+      setLocation(loc);
+    } catch (error) {
+      console.error("Error getting location:", error);
+      // alert("Error getting location: " + error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchLocation();
+  }, []);
+
+  useEffect(() => {
+    console.log("Location:", location);
+  }, [location]);
 
   useEffect(() => {
     if (courses.length > 0) {
@@ -30,24 +55,25 @@ const Open_Closed_Session: React.FC = () => {
     action: "open" | "close"
   ): Promise<void> => {
     try {
-      // Send the action to the backend
-      const response = await fetchWithAuth(`${API_URL}/session`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ course_name, course_code, action }),
-      });
+      await fetchLocation();
+      if (location) {
+        const response = await fetchWithAuth(`${API_URL}/session`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ course_name, course_code, action, location }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      console.log("response:", data);
+        console.log("response:", data);
 
-      if (response.ok) {
-        // Update the local state
-        updateCourseAction(course_code, action);
-      } else {
-        console.error("Failed to toggle session status");
+        if (response.ok) {
+          updateCourseAction(course_code, action);
+        } else {
+          console.error("Failed to toggle session status");
+        }
       }
     } catch (error) {
       console.error("Error toggling session status:", error);
@@ -92,6 +118,11 @@ const Open_Closed_Session: React.FC = () => {
             <ThemedText>No courses available</ThemedText>
           )}
         </View>
+        <ThemedView>
+          <ThemedText>
+            Location: {location?.latitude}, {location?.longitude}
+          </ThemedText>
+        </ThemedView>
       </ImageBackground>
     </ThemedView>
   );

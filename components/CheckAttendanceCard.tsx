@@ -1,24 +1,24 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { ThemedText } from "../contexts/ThemedText";
-import { useRouter } from "expo-router";
 
 export type CheckAttendanceCardProps = {
   course_code: string;
   course_name: string;
   action: string;
+  handleClick: (val: string, val2: string) => void;
 };
 
 const CheckAttendanceCard = ({
   course_code,
   course_name,
   action,
+  handleClick,
 }: CheckAttendanceCardProps) => {
-  const router = useRouter();
   return (
     <TouchableOpacity
       onPress={() =>
-        action === "open" ? router.navigate("student/Main/settings") : null
+        action === "open" ? handleClick(course_name, course_code) : null
       }
     >
       <View className="w-full flex mb-4 flex-row gap-3">
