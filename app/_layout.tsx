@@ -7,6 +7,7 @@ import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { UserRegistrationProvider } from "../components/UserRegistrationData";
 import { CourseSessionProvider } from "../contexts/CoursesSessionContext";
+import { FontAwesome5 } from "@expo/vector-icons";
 
 // Prevent the splash screen from auto hiding
 SplashScreen.preventAutoHideAsync();
@@ -26,9 +27,9 @@ const RootLayout = () => {
         "Montserrat-Regular": require("../assets/fonts/Montserrat-Regular.ttf"),
         "Montserrat-Bold": require("../assets/fonts/Montserrat-Bold.ttf"),
         "Montserrat-SemiBold": require("../assets/fonts/Montserrat-SemiBold.ttf"),
+        ...FontAwesome5.font,
       });
       setFontsLoaded(true);
-      SplashScreen.hideAsync(); // Hide the splash screen once fonts are loaded
     };
 
     // Checking if Onboarding has already been completed
@@ -41,8 +42,13 @@ const RootLayout = () => {
       }
     };
 
-    loadFonts();
-    checkOnboardingStatus();
+    const prepareApp = async () => {
+      await loadFonts();
+      await checkOnboardingStatus();
+      SplashScreen.hideAsync(); // Hide the splash screen once everything is ready
+    };
+
+    prepareApp();
   }, [isDevelopment]);
 
   useEffect(() => {
@@ -50,6 +56,10 @@ const RootLayout = () => {
       router.replace("/");
     }
   }, [fontsLoaded, isOnboardingCompleted]);
+
+  if (!fontsLoaded) {
+    return null; // Optionally, you can render a loading spinner or placeholder here
+  }
 
   return (
     <React.StrictMode>

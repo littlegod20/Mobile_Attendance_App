@@ -3,6 +3,7 @@ import {
   ImageBackground,
   FlatList,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ThemedView } from "../../contexts/ThemedView";
@@ -13,38 +14,9 @@ import fetchWithAuth from "../../services/fetchWithAuth";
 import { API_URL } from "@env";
 import { User } from "../../utils/types";
 import * as SecureStore from "expo-secure-store";
-
-type AttendanceData = {
-  course: string;
-  open: boolean;
-};
-
-const checkattendance: AttendanceData[] = [
-  {
-    course: "Basic Mechanics",
-    open: false,
-  },
-  {
-    course: "Applied Electricity",
-    open: false,
-  },
-  {
-    course: "EMC",
-    open: true,
-  },
-  {
-    course: "Computer Networking",
-    open: false,
-  },
-  {
-    course: "Linear Electronics",
-    open: false,
-  },
-  {
-    course: "Mechanics",
-    open: false,
-  },
-];
+import * as LocalAuthentication from "expo-local-authentication";
+import { LocationObjectCoords } from "expo-location";
+import { LocationCoords } from "../lecturerScreens/Open_Close_Session";
 
 interface CourseSessionProps {
   course_name: string;
@@ -62,11 +34,10 @@ const Check_AttendanceScreen = () => {
     fetchUserData();
   }, []);
 
-  useEffect(() => {
-    console.log("Updated sessions data:", courseSession);
-  }, [courseSession]);
+  // useEffect(() => {
+  //   console.log("Updated sessions data:", courseSession);
+  // }, [courseSession]);
 
-  // Use the fetched data
   useEffect(() => {
     if (user) {
       fetchCoursesSession(
@@ -103,13 +74,106 @@ const Check_AttendanceScreen = () => {
       );
 
       const data = await response.json();
-      console.log("Response:", data);
       setCourseSession(data);
     } catch (error) {
       console.error("Error fetching sessions data:", error);
-      // setError(error)
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const authenticateWithFingerprint = async (
+    course_code: string,
+    course_name: string
+  ) => {
+    try {
+      const hasHardware = await LocalAuthentication.hasHardwareAsync();
+      if (!hasHardware) {
+        Alert.alert("This device does not support biometric authentication");
+        return;
+      }
+
+      const supportedTypes =
+        await LocalAuthentication.supportedAuthenticationTypesAsync();
+      if (
+        !supportedTypes.includes(
+          LocalAuthentication.AuthenticationType.FINGERPRINT
+        )
+      ) {
+        Alert.alert(
+          "Fingerprint authentication is not supported on this device."
+        );
+        return;
+      }
+
+      const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+      if (!isEnrolled) {
+        Alert.alert("No fingerprints are enrolled on this device.");
+        return;
+      }
+
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: "Authenticate with fingerprint to check attendance",
+      });
+
+      if (!result.success) {
+        Alert.alert("Authentication failed. Please try again.");
+        return;
+      }
+
+      await checkAttendance(course_name, course_code);
+    } catch (error) {
+      console.error("Error during fingerprint authentication:", error);
+    }
+  };
+
+  const checkAttendance = async (course_code: string, course_name: string) => {
+    try {
+      // Replace these placeholder values with actual latitude and longitude
+      const location: LocationCoords = {
+        latitude: 37.7749,
+        longitude: -122.4194,
+      };
+
+      // use this second placeholder to test the distance from the lecturer
+      const location2: LocationCoords = {
+        latitude: 34.0522,
+        longitude: -118.2437,
+      };
+
+      const response = await fetchWithAuth(`${API_URL}/attendance`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          course_code,
+          course_name,
+          location,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(
+          `HTTP error! status: ${response.status}, message: ${errorText}`
+        );
+        Alert.alert(`Error checking attendance: ${errorText}`);
+        return;
+      }
+
+      const data = await response.json();
+      if (data.msg === "Attendance recorded successfully") {
+        Alert.alert("Attendance checked successfully!");
+        console.log(data.msg);
+      } else if (data.msg === "You are not within the required location") {
+        Alert.alert("Failed to check attendance. Please try again.");
+        console.log("Reason:", data.msg);
+      }
+    } catch (error) {
+      console.error("Error checking attendance:", error);
+      // Alert.alert("Error checking attendance. Please try again.");
     }
   };
 
@@ -121,9 +185,6 @@ const Check_AttendanceScreen = () => {
       >
         <View className="h-1/6 flex justify-end items-center w-full mb-8">
           <GoBackBtn path={"/student/Main/(tabs)"} />
-          {/* <ThemedText type="subtitle" className="text-black uppercase">
-            Wednesday, 12th june, 2023
-          </ThemedText> */}
         </View>
 
         <View className="w-full flex-1 flex items-center gap-7 p-2">
@@ -142,6 +203,7 @@ const Check_AttendanceScreen = () => {
                     course_name={item.course_name}
                     action={item.session_status}
                     course_code={item.course_code}
+                    handleClick={authenticateWithFingerprint}
                   />
                 </View>
               )}

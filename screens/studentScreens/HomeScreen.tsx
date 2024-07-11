@@ -95,7 +95,6 @@ const Home: React.FC = () => {
         `${API_URL}/student/courses?programme=${programme}&year=${year}`
       );
       const courses = await response.json();
-      console.log("Fetched courses:", courses);
       setCoursesData(courses);
     } catch (error) {
       console.error("Error fetching courses data:", error);
