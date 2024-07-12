@@ -170,6 +170,8 @@ const Check_AttendanceScreen = () => {
       } else if (data.msg === "You are not within the required location") {
         Alert.alert("Failed to check attendance. Please try again.");
         console.log("Reason:", data.msg);
+      } else {
+        console.log(data.msg);
       }
     } catch (error) {
       console.error("Error checking attendance:", error);

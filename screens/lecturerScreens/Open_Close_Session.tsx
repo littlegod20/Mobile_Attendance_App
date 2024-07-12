@@ -25,38 +25,42 @@ const Open_Closed_Session: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [location, setLocation] = useState<LocationCoords>(null);
+  const [locationLoading, setLocationLoading] = useState(true);
+
+  useEffect(() => {
+    const geo = async () => {
+      const loc = await getLocation();
+      setLocation(loc);
+    };
+    geo();
+  }, []);
 
   const fetchLocation = async () => {
     try {
-      const loc = await getLocation();
-      setLocation(loc);
       const response = await fetchWithAuth(`${API_URL}/lecturer/location`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          location: loc,
+          location: location,
         }),
       });
 
       if (!response.ok) {
         throw new Error("Lecturer location was not set");
       }
-
-      Alert.alert("Location set. You are good to go!");
     } catch (error) {
       console.error("Error getting location:", error);
-      // alert("Error getting location: " + error.message);
     }
   };
 
   useEffect(() => {
-    fetchLocation();
-  }, []);
-
-  useEffect(() => {
-    console.log("Location:", location);
+    if (location) {
+      setLocationLoading(false);
+      Alert.alert("Location set. You are good to go!");
+      fetchLocation();
+    }
   }, [location]);
 
   useEffect(() => {
@@ -107,7 +111,7 @@ const Open_Closed_Session: React.FC = () => {
         </View>
 
         <View className="w-full flex-1 flex items-center gap-7 p-2">
-          {isLoading ? (
+          {isLoading || locationLoading ? (
             <View className="flex-1 flex justify-center items-center">
               <ActivityIndicator size="large" color="#A66d37" />
             </View>
@@ -134,11 +138,11 @@ const Open_Closed_Session: React.FC = () => {
             <ThemedText>No courses available</ThemedText>
           )}
         </View>
-        <ThemedView>
+        {/* <ThemedView>
           <ThemedText>
             Location: {location?.latitude}, {location?.longitude}
           </ThemedText>
-        </ThemedView>
+        </ThemedView> */}
       </ImageBackground>
     </ThemedView>
   );
