@@ -21,10 +21,10 @@ const Faculty_DeptScreen = () => {
     updateUserData({ [type]: option.value });
   };
 
-  const handleFinish = async () => {
-    await submitRegistration();
-    router.push("shared_screens/log_in");
-  };
+  // const handleFinish = async () => {
+  //   await submitRegistration();
+  //   router.push("shared_screens/log_in");
+  // };
 
   return (
     <ImageBackground
@@ -57,7 +57,7 @@ const Faculty_DeptScreen = () => {
 
       <Button
         title="Finish"
-        onPress={handleFinish}
+        onPress={() => router.navigate("/student/face_registration")}
         customStyle={{ width: "70%" }}
       />
     </ImageBackground>
