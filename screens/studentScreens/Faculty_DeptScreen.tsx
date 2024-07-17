@@ -20,11 +20,6 @@ const Faculty_DeptScreen = () => {
     updateUserData({ [type]: option.value });
   };
 
-  // const handleFinish = async () => {
-  //   await submitRegistration();
-  //   router.push("shared_screens/log_in");
-  // };
-
   return (
     <ImageBackground
       source={require("../../assets/images/screen_deco.png")}

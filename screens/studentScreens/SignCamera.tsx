@@ -13,10 +13,7 @@ import { router } from "expo-router";
 
 const FaceRegistration = () => {
   const [permission, requestPermission] = useCameraPermissions();
-  //   const [capturedImage, setCapturedImage] =
-  //     useState<CameraCapturedPicture | null>(null);
   const cameraRef = useRef<CameraView | null>(null);
-  const [userName, setUserName] = useState<string>("james");
   const { updateUserData, submitRegistration, userData } =
     useUserRegistration();
 
@@ -32,7 +29,7 @@ const FaceRegistration = () => {
       text1: "Lighting Tip",
       text2: "Please stand in a well-lit area for the best picture quality.",
       position: "top",
-      visibilityTime: 20000,
+      visibilityTime: 10000,
       autoHide: true,
       topOffset: 30,
       bottomOffset: 40,
@@ -48,7 +45,6 @@ const FaceRegistration = () => {
       try {
         const photo = await cameraRef.current.takePictureAsync();
         if (photo) {
-          //   setCapturedImage(photo);
           updateUserData({ ...userData, capturedImage: photo });
         } else {
           console.error("Failed to capture image: photo is undefined");
@@ -60,7 +56,6 @@ const FaceRegistration = () => {
   };
 
   const retakePicture = () => {
-    // setCapturedImage(null);
     updateUserData({ ...userData, capturedImage: null });
   };
 
@@ -68,31 +63,6 @@ const FaceRegistration = () => {
     await submitRegistration();
     // router.push("shared_screens/log_in");
   };
-
-  //   const submit = async () => {
-  //     if (userData.capturedImage) {
-  //       const formData = new FormData();
-  //       formData.append("image", {
-  //         uri: userData.capturedImage.uri,
-  //         type: "image/jpeg",
-  //         name: `${userName}.jpg`,
-  //       } as any);
-  //       formData.append("name", userName);
-  //       console.log(formData);
-
-  //       try {
-  //         const response = await fetch("http://192.168.8.131:5000/register", {
-  //           method: "POST",
-  //           body: formData,
-  //         });
-  //         const result = await response.json();
-  //         console.log("Success:", result);
-  //         // Handle the response from your backend here
-  //       } catch (error) {
-  //         console.error("Error sending image to backend:", error);
-  //       }
-  //     }
-  //   };
 
   if (!permission) {
     return <View />;
@@ -112,7 +82,7 @@ const FaceRegistration = () => {
           />
           <View className="flex flex-col gap-8 justify-around h-[25%] p-6">
             <Button
-              title="Retake"
+              title="Re-take"
               onPress={retakePicture}
               customStyle={styles.button}
             />
