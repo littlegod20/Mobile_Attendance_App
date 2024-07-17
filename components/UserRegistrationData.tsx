@@ -17,7 +17,7 @@ export interface UserRegistrationData {
 interface UserRegistrationContextType {
   userData: UserRegistrationData;
   updateUserData: (data: Partial<UserRegistrationData>) => void;
-  submitRegistration: () => Promise<void>;
+  submitRegistration: () => Promise<void | string | boolean>;
 }
 
 const UserRegistrationContext = createContext<
@@ -77,9 +77,11 @@ export const UserRegistrationProvider: React.FC<{ children: ReactNode }> = ({
       }
 
       const result = await response.json();
-      console.log("Registration successful:", result);
+      // console.log("Registration successful:", result);
+      return true;
     } catch (error) {
-      console.error("Registration failed:", error);
+      // console.error("Registration failed:", error);
+      return false;
     }
   };
 

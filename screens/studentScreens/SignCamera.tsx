@@ -5,17 +5,19 @@ import {
   CameraCapturedPicture,
 } from "expo-camera";
 import React, { useState, useRef, useEffect } from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, ActivityIndicator } from "react-native";
 import Button from "../../components/Button";
 import Toast from "react-native-toast-message";
 import { useUserRegistration } from "../../components/UserRegistrationData";
 import { router } from "expo-router";
+import { ThemedText } from "../../contexts/ThemedText";
 
 const FaceRegistration = () => {
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView | null>(null);
   const { updateUserData, submitRegistration, userData } =
     useUserRegistration();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!permission) {
@@ -29,7 +31,7 @@ const FaceRegistration = () => {
       text1: "Lighting Tip",
       text2: "Please stand in a well-lit area for the best picture quality.",
       position: "top",
-      visibilityTime: 10000,
+      visibilityTime: 8000,
       autoHide: true,
       topOffset: 30,
       bottomOffset: 40,
@@ -60,8 +62,36 @@ const FaceRegistration = () => {
   };
 
   const handleFinish = async () => {
-    await submitRegistration();
-    // router.push("shared_screens/log_in");
+    setIsLoading(true);
+    const isSuccess = await submitRegistration();
+
+    setIsLoading(false);
+
+    if (isSuccess) {
+      Toast.show({
+        type: "success",
+        text1: "Sign Up Successful",
+        text2: "Continue by logging into your account",
+        position: "top",
+        visibilityTime: 4000,
+        autoHide: true,
+        topOffset: 30,
+        bottomOffset: 40,
+      });
+      router.push("shared_screens/log_in");
+    } else {
+      console.log("Sign up failed. Please try again.");
+      Toast.show({
+        type: "error",
+        text1: "Sign Up Failed",
+        text2: "Please check your details and try again.",
+        position: "top",
+        visibilityTime: 4000,
+        autoHide: true,
+        topOffset: 30,
+        bottomOffset: 40,
+      });
+    }
   };
 
   if (!permission) {
@@ -76,22 +106,31 @@ const FaceRegistration = () => {
     <View style={styles.container}>
       {userData.capturedImage ? (
         <>
-          <Image
-            source={{ uri: userData.capturedImage.uri }}
-            style={styles.preview}
-          />
-          <View className="flex flex-col gap-8 justify-around h-[25%] p-6">
-            <Button
-              title="Re-take"
-              onPress={retakePicture}
-              customStyle={styles.button}
-            />
-            <Button
-              title="Submit"
-              onPress={handleFinish}
-              customStyle={styles.button}
-            />
-          </View>
+          {isLoading ? (
+            <View className="flex-1 flex justify-center items-center">
+              <ThemedText>Preparing your data, Please wait</ThemedText>
+              <ActivityIndicator size="large" color="#A66d37" />
+            </View>
+          ) : (
+            <>
+              <Image
+                source={{ uri: userData.capturedImage.uri }}
+                style={styles.preview}
+              />
+              <View className="flex flex-col gap-8 justify-around h-[25%] p-6">
+                <Button
+                  title="Re-take"
+                  onPress={retakePicture}
+                  customStyle={styles.button}
+                />
+                <Button
+                  title="Submit"
+                  onPress={handleFinish}
+                  customStyle={styles.button}
+                />
+              </View>
+            </>
+          )}
         </>
       ) : (
         <CameraView style={styles.camera} facing="front" ref={cameraRef}>

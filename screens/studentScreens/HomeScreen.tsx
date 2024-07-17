@@ -155,8 +155,14 @@ const Home: React.FC = () => {
         </View>
       </View>
 
-      <View className="mt-10 h-[25%] w-full flex justify-center items-center">
+      {/* <View className="mt-10 h-[25%] w-full flex justify-center items-center">
         <CarouselCardItem />
+      </View> */}
+
+      <View className="mt-10 mb-4 h-[20%] w-full flex justify-center items-center">
+        <View className="h-full bg-[#ddd1c5] opacity-70 flex items-center justify-center w-11/12 rounded-lg">
+          <ThemedText style={{ color: "gray" }}>Upcoming Events</ThemedText>
+        </View>
       </View>
 
       <View className="mt-3 w-full px-3 flex justify-start items-center h-[80px]">

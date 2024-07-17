@@ -110,7 +110,7 @@ const LogIn = () => {
                 // path={"/shared_screens/forgot_password"}
                 message="Don't have an account?"
                 link_name="Sign Up"
-                link_path="student/registration"
+                link_path="shared_screens/sign_up"
               />
             </KeyboardAvoidanceContainer>
           </>
