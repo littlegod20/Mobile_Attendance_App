@@ -10,8 +10,7 @@ import {
 import { faculty, programme, yearOfStudy } from "../../utils/data";
 
 const Faculty_DeptScreen = () => {
-  const { updateUserData, submitRegistration, userData } =
-    useUserRegistration();
+  const { updateUserData, submitRegistration } = useUserRegistration();
   const router = useRouter();
 
   const handleDropdownChange = (

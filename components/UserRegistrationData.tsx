@@ -1,4 +1,5 @@
 import { API_URL } from "@env";
+import { CameraCapturedPicture } from "expo-camera";
 import React, { createContext, useState, useContext, ReactNode } from "react";
 
 export interface UserRegistrationData {
@@ -10,6 +11,7 @@ export interface UserRegistrationData {
   year?: string;
   faculty?: string;
   programme?: string;
+  capturedImage?: CameraCapturedPicture | null;
 }
 
 interface UserRegistrationContextType {
@@ -43,12 +45,31 @@ export const UserRegistrationProvider: React.FC<{ children: ReactNode }> = ({
   const submitRegistration = async () => {
     console.log("Submitting registration data:", userData);
     try {
+      const formData = new FormData();
+
+      //Appending the non-file fields
+      // Append the non-file fields
+      formData.append("name", userData.name);
+      formData.append("email", userData.email);
+      formData.append("password", userData.password);
+      formData.append("school_id", userData.school_id);
+      formData.append("role", userData.role);
+      if (userData.year) formData.append("year", userData.year);
+      if (userData.faculty) formData.append("faculty", userData.faculty);
+      if (userData.programme) formData.append("programme", userData.programme);
+
+      // Append the captured image if available
+      if (userData.capturedImage) {
+        formData.append("image", {
+          uri: userData.capturedImage.uri,
+          type: "image/jpeg", // or the appropriate MIME type for your image
+          name: `${userData.name}.jpg`, // or a dynamic name
+        } as any);
+      }
+
       const response = await fetch(`${API_URL}/register`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
+        body: formData,
       });
 
       if (!response.ok) {

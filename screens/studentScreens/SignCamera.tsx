@@ -8,14 +8,17 @@ import React, { useState, useRef, useEffect } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 import Button from "../../components/Button";
 import Toast from "react-native-toast-message";
+import { useUserRegistration } from "../../components/UserRegistrationData";
+import { router } from "expo-router";
 
 const FaceRegistration = () => {
   const [permission, requestPermission] = useCameraPermissions();
-  const [capturedImage, setCapturedImage] =
-    useState<CameraCapturedPicture | null>(null);
+  //   const [capturedImage, setCapturedImage] =
+  //     useState<CameraCapturedPicture | null>(null);
   const cameraRef = useRef<CameraView | null>(null);
-  const [showMessage, setShowMessage] = useState(true);
   const [userName, setUserName] = useState<string>("james");
+  const { updateUserData, submitRegistration, userData } =
+    useUserRegistration();
 
   useEffect(() => {
     if (!permission) {
@@ -36,12 +39,17 @@ const FaceRegistration = () => {
     });
   }, []);
 
+  useEffect(() => {
+    console.log("userData:", userData);
+  }, [userData]);
+
   const takePicture = async () => {
     if (cameraRef.current) {
       try {
         const photo = await cameraRef.current.takePictureAsync();
         if (photo) {
-          setCapturedImage(photo);
+          //   setCapturedImage(photo);
+          updateUserData({ ...userData, capturedImage: photo });
         } else {
           console.error("Failed to capture image: photo is undefined");
         }
@@ -52,33 +60,39 @@ const FaceRegistration = () => {
   };
 
   const retakePicture = () => {
-    setCapturedImage(null);
+    // setCapturedImage(null);
+    updateUserData({ ...userData, capturedImage: null });
   };
 
-  const submit = async () => {
-    if (capturedImage) {
-      const formData = new FormData();
-      formData.append("image", {
-        uri: capturedImage.uri,
-        type: "image/jpeg",
-        name: `${userName}.jpg`,
-      } as any);
-      formData.append("name", userName);
-      console.log(formData);
-
-      try {
-        const response = await fetch("http://192.168.8.131:5000/register", {
-          method: "POST",
-          body: formData,
-        });
-        const result = await response.json();
-        console.log("Success:", result);
-        // Handle the response from your backend here
-      } catch (error) {
-        console.error("Error sending image to backend:", error);
-      }
-    }
+  const handleFinish = async () => {
+    await submitRegistration();
+    // router.push("shared_screens/log_in");
   };
+
+  //   const submit = async () => {
+  //     if (userData.capturedImage) {
+  //       const formData = new FormData();
+  //       formData.append("image", {
+  //         uri: userData.capturedImage.uri,
+  //         type: "image/jpeg",
+  //         name: `${userName}.jpg`,
+  //       } as any);
+  //       formData.append("name", userName);
+  //       console.log(formData);
+
+  //       try {
+  //         const response = await fetch("http://192.168.8.131:5000/register", {
+  //           method: "POST",
+  //           body: formData,
+  //         });
+  //         const result = await response.json();
+  //         console.log("Success:", result);
+  //         // Handle the response from your backend here
+  //       } catch (error) {
+  //         console.error("Error sending image to backend:", error);
+  //       }
+  //     }
+  //   };
 
   if (!permission) {
     return <View />;
@@ -90,9 +104,12 @@ const FaceRegistration = () => {
 
   return (
     <View style={styles.container}>
-      {capturedImage ? (
+      {userData.capturedImage ? (
         <>
-          <Image source={{ uri: capturedImage.uri }} style={styles.preview} />
+          <Image
+            source={{ uri: userData.capturedImage.uri }}
+            style={styles.preview}
+          />
           <View className="flex flex-col gap-8 justify-around h-[25%] p-6">
             <Button
               title="Retake"
@@ -101,7 +118,7 @@ const FaceRegistration = () => {
             />
             <Button
               title="Submit"
-              onPress={submit}
+              onPress={handleFinish}
               customStyle={styles.button}
             />
           </View>
