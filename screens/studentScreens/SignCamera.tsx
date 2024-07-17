@@ -1,11 +1,6 @@
-import {
-  CameraView,
-  useCameraPermissions,
-  CameraType,
-  CameraCapturedPicture,
-} from "expo-camera";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import React, { useState, useRef, useEffect } from "react";
-import { StyleSheet, Text, View, Image, ActivityIndicator } from "react-native";
+import { StyleSheet, View, Image, ActivityIndicator } from "react-native";
 import Button from "../../components/Button";
 import Toast from "react-native-toast-message";
 import { useUserRegistration } from "../../components/UserRegistrationData";

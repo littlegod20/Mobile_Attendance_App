@@ -4,6 +4,7 @@ import {
   FlatList,
   ActivityIndicator,
   Alert,
+  RefreshControl,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ThemedView } from "../../contexts/ThemedView";
@@ -12,16 +13,19 @@ import CheckAttendanceCard from "../../components/CheckAttendanceCard";
 import GoBackBtn from "../../components/GoBackBtn";
 import fetchWithAuth from "../../services/fetchWithAuth";
 import { API_URL } from "@env";
-import { User } from "../../utils/types";
+import { CourseData, User } from "../../utils/types";
 import * as SecureStore from "expo-secure-store";
 import * as LocalAuthentication from "expo-local-authentication";
 import { LocationObjectCoords } from "expo-location";
 import { LocationCoords } from "../lecturerScreens/Open_Close_Session";
+import Toast from "react-native-toast-message";
+import { useFocusEffect } from "expo-router";
 
 interface CourseSessionProps {
   course_name: string;
   course_code: string;
   session_status: string;
+  attendance_checked: boolean;
 }
 
 const Check_AttendanceScreen = () => {
@@ -34,9 +38,9 @@ const Check_AttendanceScreen = () => {
     fetchUserData();
   }, []);
 
-  // useEffect(() => {
-  //   console.log("Updated sessions data:", courseSession);
-  // }, [courseSession]);
+  useEffect(() => {
+    console.log("Updated sessions data:", courseSession);
+  }, [courseSession]);
 
   useEffect(() => {
     if (user) {
@@ -73,7 +77,14 @@ const Check_AttendanceScreen = () => {
         `${API_URL}/student/courses?programme=${programme}&year=${year}`
       );
 
-      const data = await response.json();
+      const data: CourseSessionProps[] = await response.json();
+
+      // console.log("Data from Backend:", data);
+
+      // const formattedData = data.map((course: CourseSessionProps) => ({
+      //   ...course,
+      //   attendance_checked: Boolean(course.attendance_checked),
+      // }));
       setCourseSession(data);
     } catch (error) {
       console.error("Error fetching sessions data:", error);
@@ -137,10 +148,10 @@ const Check_AttendanceScreen = () => {
       };
 
       // use this second placeholder to test the distance from the lecturer
-      const location2: LocationCoords = {
-        latitude: 34.0522,
-        longitude: -118.2437,
-      };
+      // const location: LocationCoords = {
+      //   latitude: 34.0522,
+      //   longitude: -118.2437,
+      // };
 
       const response = await fetchWithAuth(`${API_URL}/attendance`, {
         method: "POST",
@@ -151,6 +162,7 @@ const Check_AttendanceScreen = () => {
           course_code,
           course_name,
           location,
+          attendance_checked: true,
         }),
       });
 
@@ -165,19 +177,80 @@ const Check_AttendanceScreen = () => {
 
       const data = await response.json();
       if (data.msg === "Attendance recorded successfully") {
-        Alert.alert("Attendance checked successfully!");
+        // Alert.alert("Attendance checked successfully!");
+        Toast.show({
+          type: "success",
+          text1: "Sucess!",
+          text1Style: { fontSize: 14, color: "green" },
+          text2: `Attendance for ${course_name} recorded successfully`,
+          position: "top",
+          visibilityTime: 20000,
+          autoHide: true,
+          topOffset: 30,
+          bottomOffset: 40,
+        });
+
+        await refreshCourseSessions();
         console.log(data.msg);
       } else if (data.msg === "You are not within the required location") {
-        Alert.alert("Failed to check attendance. Please try again.");
+        // Alert.alert(
+        //   "You are not within the required location. Failed to check attendance."
+        // );
+        Toast.show({
+          type: "error",
+          text1: "Failed to check attendance",
+          text1Style: { fontSize: 14, color: "red" },
+          text2: "You are not within the required location",
+          position: "top",
+          visibilityTime: 5000,
+          autoHide: true,
+          topOffset: 30,
+          bottomOffset: 40,
+        });
         console.log("Reason:", data.msg);
       } else {
+        Toast.show({
+          type: "error",
+          text1: "Error!",
+          text2: `${data.msg}`,
+          position: "top",
+          visibilityTime: 5000,
+          autoHide: true,
+          topOffset: 30,
+          bottomOffset: 40,
+        });
         console.log(data.msg);
       }
     } catch (error) {
       console.error("Error checking attendance:", error);
       // Alert.alert("Error checking attendance. Please try again.");
+      Toast.show({
+        type: "error",
+        text1: "Error!",
+        text2: `${error}`,
+        position: "top",
+        visibilityTime: 5000,
+        autoHide: true,
+        topOffset: 30,
+        bottomOffset: 40,
+      });
     }
   };
+
+  // function to refresh the course sessions
+  const refreshCourseSessions = async () => {
+    if (user) {
+      await fetchCoursesSession(
+        user.programme ? user.programme : "",
+        user.year ? user.year : ""
+      );
+    }
+  };
+
+  // using this function in useEffect and adding it to refresh control
+  useEffect(() => {
+    refreshCourseSessions();
+  }, [user]);
 
   return (
     <ThemedView className="flex-1 w-full ">
@@ -205,6 +278,7 @@ const Check_AttendanceScreen = () => {
                     course_name={item.course_name}
                     action={item.session_status}
                     course_code={item.course_code}
+                    attendance_checked={item.attendance_checked}
                     handleClick={authenticateWithFingerprint}
                   />
                 </View>
@@ -212,6 +286,12 @@ const Check_AttendanceScreen = () => {
               keyExtractor={(item) => item.course_code}
               showsVerticalScrollIndicator={false}
               style={{ width: "100%" }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={isLoading}
+                  onRefresh={refreshCourseSessions}
+                />
+              }
             />
           ) : (
             <ThemedText>No courses available</ThemedText>

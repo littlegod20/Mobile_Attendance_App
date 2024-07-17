@@ -14,6 +14,7 @@ import { API_URL } from "@env";
 import { useCourseSession } from "../../contexts/CoursesSessionContext";
 import SessionCard from "./components/SessionCard";
 import getLocation from "../../utils/locationService";
+import Toast from "react-native-toast-message";
 
 export type LocationCoords = {
   latitude: number;
@@ -58,7 +59,18 @@ const Open_Closed_Session: React.FC = () => {
   useEffect(() => {
     if (location) {
       setLocationLoading(false);
-      Alert.alert("Location set. You are good to go!");
+      // Alert.alert("Location set. You are good to go!");
+      Toast.show({
+        type: "success",
+        text1: "Location Set",
+        text1Style: { color: "green", fontSize: 14 },
+        text2: "Your location has been successfully set. You are good to go!",
+        visibilityTime: 7000,
+        autoHide: true,
+        position: "top",
+        bottomOffset: 30,
+        topOffset: 40,
+      });
       fetchLocation();
     }
   }, [location]);
