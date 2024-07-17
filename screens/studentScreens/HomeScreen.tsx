@@ -61,12 +61,6 @@ const Home: React.FC = () => {
     }
   }, [user]);
 
-  // useEffect(() => {
-  //   console.log("Courses loading:", isCoursesLoading);
-  //   console.log("Courses data:", coursesData);
-  //   console.log("Courses error:", coursesError);
-  // }, [isCoursesLoading, coursesData, coursesError]);
-
   const fetchUserData = async () => {
     try {
       const programme = await SecureStore.getItemAsync("programme");

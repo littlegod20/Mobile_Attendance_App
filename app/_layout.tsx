@@ -8,6 +8,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { UserRegistrationProvider } from "../components/UserRegistrationData";
 import { CourseSessionProvider } from "../contexts/CoursesSessionContext";
 import { FontAwesome5 } from "@expo/vector-icons";
+import Toast from "react-native-toast-message";
 
 // Prevent the splash screen from auto hiding
 SplashScreen.preventAutoHideAsync();
@@ -66,6 +67,7 @@ const RootLayout = () => {
       <UserRegistrationProvider>
         <CourseSessionProvider>
           <Slot />
+          <Toast />
         </CourseSessionProvider>
       </UserRegistrationProvider>
     </React.StrictMode>

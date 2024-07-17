@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, ImageBackground } from "react-native";
+import { View, ImageBackground, ActivityIndicator } from "react-native";
 import React from "react";
 import { ThemedView } from "../../contexts/ThemedView";
 import { ThemedText } from "../../contexts/ThemedText";
@@ -11,6 +11,7 @@ import * as SecureStore from "expo-secure-store";
 import { InputConfig } from "../../utils/types";
 
 const LogIn = () => {
+  const [loading, setLoading] = useState<boolean>(true);
   const inputConfigs: InputConfig[] = [
     {
       name: "email",
@@ -27,9 +28,8 @@ const LogIn = () => {
   const [authToken, setAuthToken] = useState<string | null>(null);
 
   const handleFormSubmit = async (formValues: { [key: string]: string }) => {
-    // console.log("Form Values:", formValues);
-
     try {
+      setLoading(false);
       const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {
@@ -66,6 +66,7 @@ const LogIn = () => {
         await SecureStore.setItemAsync("password", data.user.password);
 
         console.log("Login successful");
+        setLoading(true);
         // Redirect user or update UI to reflect logged-in state
         if (data.user.role === "student") {
           router.navigate({ pathname: "/student/Main/(tabs)" });
@@ -92,24 +93,32 @@ const LogIn = () => {
         source={require("../../assets/images/screen_deco.png")}
         className="flex-1 w-full  justify-center items-center"
       >
-        <View className="h-1/4 p-[20px] flex flex-col justify-end  items-start w-full">
-          <ThemedText type="title">Log in to your account</ThemedText>
-          <ThemedText type="smalldefault" className="text-gray-300">
-            Welcome, please enter your details
-          </ThemedText>
-        </View>
+        {loading ? (
+          <>
+            <View className="h-1/4 p-[20px] flex flex-col justify-end  items-start w-full">
+              <ThemedText type="title">Log in to your account</ThemedText>
+              <ThemedText type="smalldefault" className="text-gray-300">
+                Welcome, please enter your details
+              </ThemedText>
+            </View>
 
-        <KeyboardAvoidanceContainer>
-          <CustomForm
-            inputs={inputConfigs}
-            onSubmit={handleFormSubmit}
-            buttonTitle="Log In"
-            // path={"/shared_screens/forgot_password"}
-            message="Don't have an account?"
-            link_name="Sign Up"
-            link_path="student/registration"
-          />
-        </KeyboardAvoidanceContainer>
+            <KeyboardAvoidanceContainer>
+              <CustomForm
+                inputs={inputConfigs}
+                onSubmit={handleFormSubmit}
+                buttonTitle="Log In"
+                // path={"/shared_screens/forgot_password"}
+                message="Don't have an account?"
+                link_name="Sign Up"
+                link_path="student/registration"
+              />
+            </KeyboardAvoidanceContainer>
+          </>
+        ) : (
+          <View className="flex-1 flex justify-center items-center">
+            <ActivityIndicator size="large" color="#A66d37" />
+          </View>
+        )}
       </ImageBackground>
     </ThemedView>
   );

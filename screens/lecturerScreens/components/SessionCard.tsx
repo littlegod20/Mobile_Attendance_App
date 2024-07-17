@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import React from "react";
 import { ThemedText } from "../../../contexts/ThemedText";
 
@@ -21,7 +21,24 @@ const SessionCard: React.FC<SessionCardProps> = ({
 }) => {
   const handlePress = () => {
     const action = isOpen ? "close" : "open";
-    onToggleSession(course_code, course_name, action);
+    Alert.alert(
+      "Open Session",
+      `Are you sure you want to ${
+        isOpen ? "close" : "open"
+      } session for ${course_name}`,
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => onToggleSession(course_code, course_name, action),
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   return (

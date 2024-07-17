@@ -10,8 +10,7 @@ import {
 import { faculty, programme, yearOfStudy } from "../../utils/data";
 
 const Faculty_DeptScreen = () => {
-  const { updateUserData, submitRegistration, userData } =
-    useUserRegistration();
+  const { updateUserData, submitRegistration } = useUserRegistration();
   const router = useRouter();
 
   const handleDropdownChange = (
@@ -19,11 +18,6 @@ const Faculty_DeptScreen = () => {
     option: { label: string; value: string }
   ) => {
     updateUserData({ [type]: option.value });
-  };
-
-  const handleFinish = async () => {
-    await submitRegistration();
-    router.push("shared_screens/log_in");
   };
 
   return (
@@ -56,8 +50,8 @@ const Faculty_DeptScreen = () => {
       </View>
 
       <Button
-        title="Finish"
-        onPress={handleFinish}
+        title="Next"
+        onPress={() => router.navigate("/student/face_registration")}
         customStyle={{ width: "70%" }}
       />
     </ImageBackground>
