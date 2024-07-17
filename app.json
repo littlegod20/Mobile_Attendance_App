@@ -40,7 +40,19 @@
       "favicon": "/assets/images/favicon.pngy"
     },
     "assetBundlePatterns": ["**/*"],
-    "plugins": ["expo-router", "expo-font", "expo-secure-store"],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
+        }
+      ]
+    ],
     "scheme": "attendance-checker",
     "runtimeVersion": "1.0.0"
   }

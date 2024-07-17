@@ -56,7 +56,7 @@ const Faculty_DeptScreen = () => {
       </View>
 
       <Button
-        title="Finish"
+        title="Next"
         onPress={() => router.navigate("/student/face_registration")}
         customStyle={{ width: "70%" }}
       />
