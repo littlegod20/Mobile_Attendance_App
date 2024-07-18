@@ -7,9 +7,11 @@ export interface CarouselProps {
   time?: string;
   courseId?: string;
   courseName?: string;
-  percentage?: number;
+  week?: number;
+  attendance?: string;
+  attendanceFraction?: number;
+  code?: string;
 }
-[];
 
 export interface CourseData {
   course_name: string;
