@@ -24,6 +24,7 @@ import { API_URL } from "@env";
 import * as SecureStore from "expo-secure-store";
 import fetchWithAuth from "../../services/fetchWithAuth";
 import { User } from "../../utils/types";
+import CarouselWithPagination from "../../components/AttendanceProgress";
 
 export type Course = {
   course_name: string;
@@ -136,33 +137,27 @@ const Home: React.FC = () => {
     <ThemedView className="flex flex-1 items-center justify-start">
       <View className=" h-[10%] w-11/12 flex-row items-center justify-start">
         <Avatar.Image
-          size={60}
+          size={55}
           source={require("../../assets/images/icon.png")}
           theme={darkTheme}
         />
         <View className="ml-3">
-          <ThemedText type="subtitle" style={{ fontSize: 20 }}>
-            Hello
+          <ThemedText type="subtitle" style={{ fontSize: 22 }}>
+            Hello,
           </ThemedText>
           <ThemedText
             type="defaultSemiBold"
             numberOfLines={1}
             ellipsizeMode="tail"
-            className="w-44"
+            className="w-44 uppercase"
           >
             {user?.name}
           </ThemedText>
         </View>
       </View>
 
-      {/* <View className="mt-10 h-[25%] w-full flex justify-center items-center">
-        <CarouselCardItem />
-      </View> */}
-
-      <View className="mt-10 mb-4 h-[20%] w-full flex justify-center items-center">
-        <View className="h-full bg-[#ddd1c5] opacity-70 flex items-center justify-center w-11/12 rounded-lg">
-          <ThemedText style={{ color: "gray" }}>Upcoming Events</ThemedText>
-        </View>
+      <View className="mt-10 h-[25%] w-full flex justify-center items-center">
+        <CarouselWithPagination />
       </View>
 
       <View className="mt-3 w-full px-3 flex justify-start items-center h-[80px]">

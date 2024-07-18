@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Modal, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  StyleSheet,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { ThemedText } from "../contexts/ThemedText";
 import { AntDesign } from "@expo/vector-icons";
 import { Option } from "../utils/types";
@@ -71,22 +78,24 @@ const CustomDropDown: React.FC<CustomDropDownProps> = ({
       <Modal
         visible={showOptions}
         transparent={true}
-        animationType="fade"
+        animationType="slide"
         onRequestClose={toggleOptions}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            {options.map((option) => (
-              <TouchableOpacity
-                key={option.value}
-                onPress={() => handleOptionSelect(option)}
-                style={styles.option}
-              >
-                <Text>{option.label}</Text>
-              </TouchableOpacity>
-            ))}
+        <TouchableWithoutFeedback onPress={toggleOptions}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              {options.map((option) => (
+                <TouchableOpacity
+                  key={option.value}
+                  onPress={() => handleOptionSelect(option)}
+                  style={styles.option}
+                >
+                  <Text>{option.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </View>
   );

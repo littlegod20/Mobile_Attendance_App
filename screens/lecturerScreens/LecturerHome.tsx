@@ -144,12 +144,12 @@ export default function LecturerHome() {
     <ThemedView className="flex flex-1 items-center justify-start">
       <View className=" h-[10%] w-11/12 flex-row items-center justify-start">
         <Avatar.Image
-          size={60}
+          size={55}
           source={require("../../assets/images/icon.png")}
           theme={darkTheme}
         />
         <View className="ml-3">
-          <ThemedText type="subtitle" style={{ fontSize: 25 }}>
+          <ThemedText type="subtitle" style={{ fontSize: 22 }}>
             Hello
           </ThemedText>
           <ThemedText
