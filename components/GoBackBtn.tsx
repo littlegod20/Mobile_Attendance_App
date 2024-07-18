@@ -16,7 +16,7 @@ const GoBackBtn = ({ path }: GoBackBtnProps) => {
       style={{ width: "100%", padding: 5 }}
       onPress={handleBack}
     >
-      <Ionicons name="arrow-back-circle" size={32} color={"#DC924D"} />
+      <Ionicons name="arrow-back-circle" size={25} color={"#DC924D"} />
     </TouchableOpacity>
   );
 };
