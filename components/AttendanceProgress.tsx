@@ -13,8 +13,23 @@ import { CarouselProps } from "../utils/types";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-const CarouselWithPagination: React.FC = () => {
+interface CarouselWithPaginationProps {
+  attendanceData: CarouselProps[];
+}
+
+const CarouselWithPagination: React.FC<CarouselWithPaginationProps> = ({
+  attendanceData,
+}) => {
   const [activeIndex, setActiveIndex] = useState(0);
+
+  const carouselData = [
+    {
+      id: 1,
+      title: "Upcoming Events",
+      time: new Date().toLocaleTimeString(),
+    },
+    ...attendanceData,
+  ];
 
   const [isAutoPlay, setIsAutoPlay] = useState(true);
 
@@ -34,13 +49,22 @@ const CarouselWithPagination: React.FC = () => {
           {item.title ? item.title : item.courseName}
         </ThemedText>
         <ThemedText type="mediumSemi">
-          {" "}
-          {item.time ? item.time : item.courseId}{" "}
+          {item.time ? item.time : `Week ${item.week}`}
         </ThemedText>
         {item.courseId ? (
-          <ThemedText className="italic">
-            Attendance Rate: {item.percentage}%
-          </ThemedText>
+          <>
+            <ThemedText className="italic">
+              Attendance: {item.attendance}
+            </ThemedText>
+            <ThemedText className="italic">
+              Rate:{" "}
+              {(item.attendanceFraction
+                ? item.attendanceFraction * 100
+                : 0.0
+              ).toFixed(2)}
+              %
+            </ThemedText>
+          </>
         ) : null}
       </ThemedView>
     );
@@ -87,7 +111,7 @@ const CarouselWithPagination: React.FC = () => {
           width={SCREEN_WIDTH * 0.85}
           autoPlay={isAutoPlay}
           autoPlayInterval={3000}
-          data={carousel}
+          data={carouselData}
           scrollAnimationDuration={1000}
           onSnapToItem={(index) => setActiveIndex(index)}
           renderItem={renderItem}

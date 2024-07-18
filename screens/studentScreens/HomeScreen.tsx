@@ -23,8 +23,9 @@ import CarouselCardItem from "../../components/AttendanceProgress";
 import { API_URL } from "@env";
 import * as SecureStore from "expo-secure-store";
 import fetchWithAuth from "../../services/fetchWithAuth";
-import { User } from "../../utils/types";
+import { CarouselProps, User } from "../../utils/types";
 import CarouselWithPagination from "../../components/AttendanceProgress";
+import { fetchAttendanceData } from "../../services/attendanceService";
 
 export type Course = {
   course_name: string;
@@ -47,10 +48,17 @@ const Home: React.FC = () => {
   const [recentData, setRecentData] = useState<Recents[]>([]);
   const [isRecentLoading, setIsRecentLoading] = useState<boolean>(true);
   const [recentError, setRecentError] = useState<Error | null>(null);
+  const [attendanceData, setAttendanceData] = useState<CarouselProps[]>([]);
 
   useEffect(() => {
     fetchUserData();
   }, []);
+
+  useEffect(() => {
+    if (coursesData.length > 0) {
+      fetchCarouselAttendance();
+    }
+  }, [coursesData]);
 
   useEffect(() => {
     if (user) {
@@ -61,6 +69,15 @@ const Home: React.FC = () => {
       );
     }
   }, [user]);
+
+  const fetchCarouselAttendance = async () => {
+    const courses = coursesData.map((course) => ({
+      value: course.course_code,
+      label: course.course_name,
+    }));
+    const data = await fetchAttendanceData(courses);
+    setAttendanceData(data);
+  };
 
   const fetchUserData = async () => {
     try {
@@ -157,7 +174,7 @@ const Home: React.FC = () => {
       </View>
 
       <View className="mt-10 h-[25%] w-full flex justify-center items-center">
-        <CarouselWithPagination />
+        <CarouselWithPagination attendanceData={attendanceData} />
       </View>
 
       <View className="mt-3 w-full px-3 flex justify-start items-center h-[80px]">

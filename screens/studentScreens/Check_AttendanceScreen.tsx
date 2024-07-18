@@ -38,9 +38,9 @@ const Check_AttendanceScreen = () => {
     fetchUserData();
   }, []);
 
-  useEffect(() => {
-    console.log("Updated sessions data:", courseSession);
-  }, [courseSession]);
+  // useEffect(() => {
+  //   console.log("Updated sessions data:", courseSession);
+  // }, [courseSession]);
 
   useEffect(() => {
     if (user) {
