@@ -96,7 +96,7 @@ const CarouselWithPagination: React.FC<CarouselWithPaginationProps> = ({
             height: 8,
             borderRadius: 4,
             marginHorizontal: 4,
-            backgroundColor: "black",
+            backgroundColor: "#A66d37",
           },
           animatedStyle,
         ]}
