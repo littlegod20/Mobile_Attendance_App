@@ -63,14 +63,14 @@ const RootLayout = () => {
   }
 
   return (
-    <React.StrictMode>
-      <UserRegistrationProvider>
-        <CourseSessionProvider>
-          <Slot />
-          <Toast />
-        </CourseSessionProvider>
-      </UserRegistrationProvider>
-    </React.StrictMode>
+    // <React.StrictMode>
+    <UserRegistrationProvider>
+      <CourseSessionProvider>
+        <Slot />
+        <Toast />
+      </CourseSessionProvider>
+    </UserRegistrationProvider>
+    // </React.StrictMode>
   );
 };
 

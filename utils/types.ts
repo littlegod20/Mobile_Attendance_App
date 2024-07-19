@@ -7,8 +7,8 @@ export interface CarouselProps {
   time?: string;
   courseId?: string;
   courseName?: string;
-  week?: number;
-  attendance?: string;
+  week?: string;
+  attendance?: number;
   attendanceFraction?: number;
   code?: string;
 }
