@@ -55,10 +55,8 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (coursesData.length > 0) {
-      fetchCarouselAttendance();
-    }
-  }, [coursesData]);
+    fetchCarouselAttendance();
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -70,12 +68,12 @@ const Home: React.FC = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    console.log("data:", attendanceData);
+  }, [attendanceData]);
+
   const fetchCarouselAttendance = async () => {
-    const courses = coursesData.map((course) => ({
-      value: course.course_code,
-      label: course.course_name,
-    }));
-    const data = await fetchAttendanceData(courses);
+    const data = await fetchAttendanceData();
     setAttendanceData(data);
   };
 

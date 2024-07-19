@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Dimensions } from "react-native";
+import { View, Dimensions } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import Animated, {
   useAnimatedStyle,
@@ -43,31 +43,32 @@ const CarouselWithPagination: React.FC<CarouselWithPaginationProps> = ({
   };
 
   const renderItem = ({ item }: { item: CarouselProps }) => {
-    return (
-      <ThemedView className="h-full bg-blue-300 flex items-center justify-center">
-        <ThemedText type="defaultSemiBold">
-          {item.title ? item.title : item.courseName}
-        </ThemedText>
-        <ThemedText type="mediumSemi">
-          {item.time ? item.time : `Week ${item.week}`}
-        </ThemedText>
-        {item.courseId ? (
-          <>
-            <ThemedText className="italic">
-              Attendance: {item.attendance}
-            </ThemedText>
-            <ThemedText className="italic">
-              Rate:{" "}
-              {(item.attendanceFraction
-                ? item.attendanceFraction * 100
-                : 0.0
-              ).toFixed(2)}
-              %
-            </ThemedText>
-          </>
-        ) : null}
-      </ThemedView>
-    );
+    if ("title" in item) {
+      // Render Upcoming Events item
+      return (
+        <ThemedView className="h-full bg-blue-300 flex items-center justify-center">
+          <ThemedText type="defaultSemiBold">{item.title}</ThemedText>
+          <ThemedText type="mediumSemi">{item.time}</ThemedText>
+        </ThemedView>
+      );
+    } else {
+      // Render Attendance item
+      return (
+        <ThemedView className="h-full bg-blue-300 flex items-center justify-center">
+          <ThemedText type="defaultSemiBold">{item.courseName}</ThemedText>
+          <ThemedText type="mediumSemi">{`Week ${item.week}`}</ThemedText>
+          <ThemedText className="italic">
+            Attendance: {item.attendance}
+          </ThemedText>
+          <ThemedText className="italic">
+            Rate:{" "}
+            {item.attendanceFraction
+              ? `${Math.round(item.attendanceFraction * 100)}%`
+              : "N/A"}
+          </ThemedText>
+        </ThemedView>
+      );
+    }
   };
 
   const PaginationItem: React.FC<{ index: number }> = ({ index }) => {

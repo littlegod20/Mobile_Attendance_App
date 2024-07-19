@@ -27,9 +27,9 @@ export default function History() {
     }
   }, [user]);
 
-  useEffect(() => {
-    console.log("Updating data:", weeks);
-  }, [weeks]);
+  // useEffect(() => {
+  //   console.log("Updating data:", weeks);
+  // }, [weeks]);
 
   const fetchUserData = async () => {
     try {
