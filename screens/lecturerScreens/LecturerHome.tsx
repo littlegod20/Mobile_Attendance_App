@@ -19,13 +19,14 @@ import { FlatList } from "react-native";
 import React, { useState, useEffect } from "react";
 import TimeTableCourse from "../../components/TimeTableCourse";
 import { TouchableWithoutFeedback } from "react-native";
-import { User } from "../../utils/types";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Recents } from "../studentScreens/HomeScreen";
 import fetchWithAuth from "../../services/fetchWithAuth";
 import { API_URL } from "@env";
 import * as SecureStore from "expo-secure-store";
 import { useCourseSession } from "../../contexts/CoursesSessionContext";
+import CarouselWithPagination from "../../components/AttendanceProgress";
+import { CarouselProps, User } from "../../utils/types";
 
 export default function LecturerHome() {
   const { courses, setCourses } = useCourseSession();
@@ -37,6 +38,9 @@ export default function LecturerHome() {
   const [isRecentLoading, setIsRecentLoading] = useState<boolean>(true);
   const [recentError, setRecentError] = useState<Error | null>(null);
   const [isAnyCourseSessionOpen, setIsAnyCourseSessionOpen] = useState(false);
+  const [overall_classAttendance, setOverall_classAttendance] = useState<
+    CarouselProps[]
+  >([]);
 
   useEffect(() => {
     fetchUserData();
@@ -47,6 +51,10 @@ export default function LecturerHome() {
       fetchRecentsData();
       if (courses.length === 0) {
         fetchCoursesData(user.school_id ? user.school_id : "");
+      }
+
+      if (overall_classAttendance.length === 0) {
+        fetchOverallAttendance(user.school_id ? user.school_id : "");
       }
     }
   }, [user]);
@@ -100,6 +108,26 @@ export default function LecturerHome() {
       );
     } finally {
       setIsCoursesLoading(false);
+    }
+  };
+
+  const fetchOverallAttendance = async (school_id: string) => {
+    try {
+      const response = await fetchWithAuth(
+        `${API_URL}/lecturer/overall-attendance?school_id=${school_id}`
+      );
+      const data = await response.json();
+
+      console.log("Fetched Data:", data);
+      console.log("Setting overall attendance:", data[0]);
+
+      if (Array.isArray(data) && data.length > 0) {
+        setOverall_classAttendance(data);
+      } else {
+        throw new Error("Unexpected data structure recieved from server");
+      }
+    } catch (error) {
+      console.log("Error fetching overall class attendance data:", error);
     }
   };
 
@@ -162,11 +190,8 @@ export default function LecturerHome() {
           </ThemedText>
         </View>
       </View>
-
-      <View className="mt-10 h-[20%] w-full flex justify-center items-center">
-        <View className="h-full bg-[#ddd1c5] opacity-70 flex items-center justify-center w-11/12 rounded-lg">
-          <ThemedText style={{ color: "gray" }}>Upcoming Events</ThemedText>
-        </View>
+      <View className="mt-6 h-[25%] w-full flex justify-center items-center">
+        <CarouselWithPagination attendanceData={overall_classAttendance} />
       </View>
 
       <View className="mt-6 w-full px-3 flex justify-start items-center h-[80px]">

@@ -55,16 +55,28 @@ const CarouselWithPagination: React.FC<CarouselWithPaginationProps> = ({
       // Render Attendance item
       return (
         <ThemedView className="h-full bg-blue-300 flex items-center justify-center">
-          <ThemedText type="defaultSemiBold">{item.courseName}</ThemedText>
-          <ThemedText type="mediumSemi">{`Week ${item.week}`}</ThemedText>
-          <ThemedText className="italic">
-            Attendance: {item.attendance}
+          <ThemedText type="defaultSemiBold">
+            {item.courseName ? item.courseName : item.course_name}
+          </ThemedText>
+          <ThemedText type="mediumSemi">
+            {item.week ? "Week" : "Sessions :"}{" "}
+            {item.week
+              ? item.week
+              : item.total_sessions
+              ? item.total_sessions
+              : 0}
           </ThemedText>
           <ThemedText className="italic">
-            Rate:{" "}
+            {item.attendance ? "Attendance" : "Average Attendance"}:{" "}
+            {item.attendance
+              ? item.attendance
+              : `${item.average_attendance ? ~~item.average_attendance : 0}%`}
+          </ThemedText>
+          <ThemedText className="italic">
+            {item.attendanceFraction ? "Rate" : "Total Students"}:{" "}
             {item.attendanceFraction
               ? `${Math.round(item.attendanceFraction * 100)}%`
-              : "N/A"}
+              : item.total_students}
           </ThemedText>
         </ThemedView>
       );
