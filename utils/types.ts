@@ -11,6 +11,14 @@ export interface CarouselProps {
   attendance?: number;
   attendanceFraction?: number;
   code?: string;
+
+  // lecturer fields
+  average_attendance?: number;
+  course_code?: string;
+  course_name?: string;
+  total_attendance?: number;
+  total_sessions?: number;
+  total_students?: number;
 }
 
 export interface CourseData {

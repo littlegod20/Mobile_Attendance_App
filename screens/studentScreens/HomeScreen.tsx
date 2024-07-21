@@ -171,7 +171,7 @@ const Home: React.FC = () => {
         </View>
       </View>
 
-      <View className="mt-10 h-[25%] w-full flex justify-center items-center">
+      <View className="mt-6 h-[25%] w-full flex justify-center items-center">
         <CarouselWithPagination attendanceData={attendanceData} />
       </View>
 

@@ -78,13 +78,6 @@ const Check_AttendanceScreen = () => {
       );
 
       const data: CourseSessionProps[] = await response.json();
-
-      // console.log("Data from Backend:", data);
-
-      // const formattedData = data.map((course: CourseSessionProps) => ({
-      //   ...course,
-      //   attendance_checked: Boolean(course.attendance_checked),
-      // }));
       setCourseSession(data);
     } catch (error) {
       console.error("Error fetching sessions data:", error);
