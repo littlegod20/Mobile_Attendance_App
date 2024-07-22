@@ -13,13 +13,12 @@ import CheckAttendanceCard from "../../components/CheckAttendanceCard";
 import GoBackBtn from "../../components/GoBackBtn";
 import fetchWithAuth from "../../services/fetchWithAuth";
 import { API_URL } from "@env";
-import { CourseData, User } from "../../utils/types";
+import { User } from "../../utils/types";
 import * as SecureStore from "expo-secure-store";
-import * as LocalAuthentication from "expo-local-authentication";
-import { LocationObjectCoords } from "expo-location";
 import { LocationCoords } from "../lecturerScreens/Open_Close_Session";
 import Toast from "react-native-toast-message";
-import { useFocusEffect } from "expo-router";
+import authenticateWithFingerprint from "../../services/fingerPrint";
+import getLocation from "../../services/locationService";
 
 interface CourseSessionProps {
   course_name: string;
@@ -33,14 +32,43 @@ const Check_AttendanceScreen = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
+  // const [location, setLocation] = useState<LocationCoords>(null);
+  const [locationLoading, setLocationLoading] = useState(true);
 
   useEffect(() => {
     fetchUserData();
   }, []);
 
+  // getting location of student
   // useEffect(() => {
-  //   console.log("Updated sessions data:", courseSession);
-  // }, [courseSession]);
+  //   const geo = async () => {
+  //     const loc = await getLocation();
+  //     setLocation(loc);
+  //   };
+  //   geo();
+  // }, []);
+
+  // useEffect(() => {
+  //   console.log("Updating location:", location);
+  // }, [location]);
+
+  // useEffect(() => {
+  //   if (location) {
+  //     setLocationLoading(false);
+  //     Toast.show({
+  //       type: "success",
+  //       text1: "Location Set",
+  //       text1Style: { color: "green", fontSize: 14 },
+  //       text2: "Your location has been successfully set!",
+  //       text2Style: { fontSize: 13, color: "black" },
+  //       visibilityTime: 7000,
+  //       autoHide: true,
+  //       position: "top",
+  //       bottomOffset: 30,
+  //       topOffset: 40,
+  //     });
+  //   }
+  // }, [location]);
 
   useEffect(() => {
     if (user) {
@@ -86,46 +114,9 @@ const Check_AttendanceScreen = () => {
     }
   };
 
-  const authenticateWithFingerprint = async (
-    course_code: string,
-    course_name: string
-  ) => {
+  const Authenticate = async (course_code: string, course_name: string) => {
     try {
-      const hasHardware = await LocalAuthentication.hasHardwareAsync();
-      if (!hasHardware) {
-        Alert.alert("This device does not support biometric authentication");
-        return;
-      }
-
-      const supportedTypes =
-        await LocalAuthentication.supportedAuthenticationTypesAsync();
-      if (
-        !supportedTypes.includes(
-          LocalAuthentication.AuthenticationType.FINGERPRINT
-        )
-      ) {
-        Alert.alert(
-          "Fingerprint authentication is not supported on this device."
-        );
-        return;
-      }
-
-      const isEnrolled = await LocalAuthentication.isEnrolledAsync();
-
-      if (!isEnrolled) {
-        Alert.alert("No fingerprints are enrolled on this device.");
-        return;
-      }
-
-      const result = await LocalAuthentication.authenticateAsync({
-        promptMessage: "Authenticate with fingerprint to check attendance",
-      });
-
-      if (!result.success) {
-        Alert.alert("Authentication failed. Please try again.");
-        return;
-      }
-
+      await authenticateWithFingerprint();
       await checkAttendance(course_name, course_code);
     } catch (error) {
       console.error("Error during fingerprint authentication:", error);
@@ -170,7 +161,6 @@ const Check_AttendanceScreen = () => {
 
       const data = await response.json();
       if (data.msg === "Attendance recorded successfully") {
-        // Alert.alert("Attendance checked successfully!");
         Toast.show({
           type: "success",
           text1: "Sucess!",
@@ -186,9 +176,6 @@ const Check_AttendanceScreen = () => {
         await refreshCourseSessions();
         console.log(data.msg);
       } else if (data.msg === "You are not within the required location") {
-        // Alert.alert(
-        //   "You are not within the required location. Failed to check attendance."
-        // );
         Toast.show({
           type: "error",
           text1: "Failed to check attendance",
@@ -256,6 +243,7 @@ const Check_AttendanceScreen = () => {
         </View>
 
         <View className="w-full flex-1 flex items-center gap-7 p-2">
+          {/* || locationLoading */}
           {isLoading ? (
             <View className="flex-1 flex justify-center items-center">
               <ActivityIndicator size="large" color="#A66d37" />
@@ -272,7 +260,7 @@ const Check_AttendanceScreen = () => {
                     action={item.session_status}
                     course_code={item.course_code}
                     attendance_checked={item.attendance_checked}
-                    handleClick={authenticateWithFingerprint}
+                    handleClick={Authenticate}
                   />
                 </View>
               )}
