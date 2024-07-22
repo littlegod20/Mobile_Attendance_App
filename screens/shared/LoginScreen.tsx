@@ -84,7 +84,7 @@ const LogIn = () => {
         text1: `Login Failed`,
         text1Style: { fontSize: 14, color: "red" },
         text2: `${error}` || "An unknown error occurred",
-        text2Style: { fontSize: 14 },
+        text2Style: { fontSize: 14, color: "black" },
       });
       console.log(
         "login email>password:",
