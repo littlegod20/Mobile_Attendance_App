@@ -134,17 +134,17 @@ const Check_AttendanceScreen = () => {
 
   const checkAttendance = async (course_code: string, course_name: string) => {
     try {
-      // Replace these placeholder values with actual latitude and longitude
-      const location: LocationCoords = {
-        latitude: 37.7749,
-        longitude: -122.4194,
-      };
-
-      // use this second placeholder to test the distance from the lecturer
+      // location greater than 50 meters
       // const location: LocationCoords = {
-      //   latitude: 34.0522,
-      //   longitude: -118.2437,
+      //   latitude: 37.4224983,
+      //   longitude: -122.0845,
       // };
+
+      // location lesser that 50 meters
+      const location: LocationCoords = {
+        latitude: 37.4220383,
+        longitude: -122.08404,
+      };
 
       const response = await fetchWithAuth(`${API_URL}/attendance`, {
         method: "POST",
