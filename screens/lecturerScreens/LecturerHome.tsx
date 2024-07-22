@@ -266,20 +266,18 @@ export default function LecturerHome() {
         />
       </View>
 
-      <View className="mt-4 w-full h-[40%] px-3">
-        <View className="flex-1">
-          <View className="w-full flex flex-row justify-between">
-            <ThemedText type="subtitle">Recent</ThemedText>
-            <TouchableOpacity onPress={toggleMenu}>
-              <View style={styles.iconContainer}>
-                <FontAwesome5 name="th-large" size={24} color="white" />
-              </View>
-            </TouchableOpacity>
-          </View>
+      <View className="relative flex justify-start items-start w-11/12 mt-[10px]">
+        <ThemedText type="subtitle" customStyle={{ marginBottom: 15 }}>
+          Recents
+        </ThemedText>
 
+        <View className="relative h-1/2 w-full">
+          <TouchableOpacity onPress={toggleMenu} style={styles.iconContainer}>
+            <FontAwesome5 name="book-reader" size={24} color="white" />
+          </TouchableOpacity>
           {isRecentLoading ? (
-            <View className="w-full flex-1 flex justify-center items-center">
-              <ActivityIndicator size="large" color="#DC924D" />
+            <View className="flex-1 flex justify-center items-center">
+              <ActivityIndicator size="large" color="#A66d37" />
             </View>
           ) : recentError ? (
             <ThemedText>Error: {recentError.message}</ThemedText>
@@ -288,12 +286,12 @@ export default function LecturerHome() {
               data={recentData}
               renderItem={({ item }) => (
                 <RecentCard
-                  course_name={item.course_name}
                   course_code={item.course_code}
                   time={item.timestamp}
+                  course_name={item.course_name}
                 />
               )}
-              keyExtractor={(item, index) => index.toString()}
+              keyExtractor={(_i, index) => index.toString()}
               showsVerticalScrollIndicator={false}
             />
           ) : (
