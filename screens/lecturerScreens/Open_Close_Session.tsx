@@ -15,6 +15,7 @@ import { useCourseSession } from "../../contexts/CoursesSessionContext";
 import SessionCard from "./components/SessionCard";
 import getLocation from "../../utils/locationService";
 import Toast from "react-native-toast-message";
+import { useLocalSearchParams } from "expo-router";
 
 export type LocationCoords = {
   latitude: number;
@@ -27,6 +28,7 @@ const Open_Closed_Session: React.FC = () => {
   const [error, setError] = useState<Error | null>(null);
   const [location, setLocation] = useState<LocationCoords>(null);
   const [locationLoading, setLocationLoading] = useState(true);
+  const { perimeter } = useLocalSearchParams<{ perimeter: string }>();
 
   useEffect(() => {
     const geo = async () => {
@@ -64,7 +66,8 @@ const Open_Closed_Session: React.FC = () => {
         type: "success",
         text1: "Location Set",
         text1Style: { color: "green", fontSize: 14 },
-        text2: "Your location has been successfully set. You are good to go!",
+        text2: "Your location has been successfully set!",
+        text2Style: { fontSize: 13, color: "black" },
         visibilityTime: 7000,
         autoHide: true,
         position: "top",
@@ -94,7 +97,13 @@ const Open_Closed_Session: React.FC = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ course_name, course_code, action, location }),
+          body: JSON.stringify({
+            course_name,
+            course_code,
+            action,
+            location,
+            perimeter: perimeter ? parseFloat(perimeter) : undefined,
+          }),
         });
 
         const data = await response.json();

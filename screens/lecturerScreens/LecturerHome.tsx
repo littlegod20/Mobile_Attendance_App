@@ -7,6 +7,7 @@ import {
   ImageBackground,
   Alert,
   ActivityIndicator,
+  TextInput,
 } from "react-native";
 import { Avatar } from "react-native-paper";
 import { ThemedText } from "../../contexts/ThemedText";
@@ -27,6 +28,7 @@ import * as SecureStore from "expo-secure-store";
 import { useCourseSession } from "../../contexts/CoursesSessionContext";
 import CarouselWithPagination from "../../components/AttendanceProgress";
 import { CarouselProps, User } from "../../utils/types";
+import DropDownPicker from "react-native-dropdown-picker";
 
 export default function LecturerHome() {
   const { courses, setCourses } = useCourseSession();
@@ -41,6 +43,18 @@ export default function LecturerHome() {
   const [overall_classAttendance, setOverall_classAttendance] = useState<
     CarouselProps[]
   >([]);
+  const [perimeter, setPerimeter] = useState<number | null>(null);
+  const [perimeterInput, setPerimeterInput] = useState<string>("");
+  const [isPerimeterModalVisible, setIsPerimeterModalVisible] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [dropdownItems, setDropdownItems] = useState([
+    { label: "50 meters", value: 50 },
+    { label: "100 meters", value: 100 },
+    { label: "200 meters", value: 200 },
+    { label: "Custom", value: "" },
+  ]);
+
+  const [isCustomSelected, setIsCustomSelected] = useState(false);
 
   useEffect(() => {
     fetchUserData();
@@ -118,13 +132,10 @@ export default function LecturerHome() {
       );
       const data = await response.json();
 
-      console.log("Fetched Data:", data);
-      console.log("Setting overall attendance:", data[0]);
-
       if (Array.isArray(data) && data.length > 0) {
         setOverall_classAttendance(data);
       } else {
-        throw new Error("Unexpected data structure recieved from server");
+        throw new Error("Unexpected data structure received from server");
       }
     } catch (error) {
       console.log("Error fetching overall class attendance data:", error);
@@ -161,12 +172,62 @@ export default function LecturerHome() {
   };
 
   const handleOpenSession = () => {
-    router.navigate("/lecturer/open_close_session");
+    if (isAnyCourseSessionOpen === false) {
+      setIsPerimeterModalVisible(true);
+    } else {
+      router.navigate("/lecturer/open_close_session");
+    }
+  };
+
+  const handlePerimeterChange = (value: string) => {
+    setPerimeterInput(value);
+    const numericValue = parseFloat(value);
+    if (!isNaN(numericValue) && numericValue > 0) {
+      setPerimeter(numericValue);
+    } else {
+      setPerimeter(null);
+    }
+  };
+
+  const handlePerimeterSelection = (value: any) => {
+    if (value === "") {
+      setIsCustomSelected(true);
+      setPerimeter(null);
+    } else {
+      setPerimeter(value);
+      setPerimeterInput(value);
+      setIsCustomSelected(false);
+    }
+  };
+
+  const handlePerimeterConfirm = () => {
+    if (perimeter !== null && perimeter > 0) {
+      setIsPerimeterModalVisible(false);
+      router.push({
+        pathname: "/lecturer/open_close_session",
+        params: { perimeter: perimeter.toString() },
+      });
+    } else {
+      Alert.alert(
+        "Error",
+        "Please enter a valid perimeter value greater than 0."
+      );
+    }
   };
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
   };
+
+  const togglePerimeterView = () => {
+    setIsPerimeterModalVisible((prev) => !prev);
+  };
+
+  useEffect(() => {
+    console.log("Is Custom Selected:", isCustomSelected);
+    console.log("Perimeter:", perimeter);
+    console.log("Perimeter Input:", perimeterInput);
+  }, [isCustomSelected, perimeter, perimeterInput]);
 
   return (
     <ThemedView className="flex flex-1 items-center justify-start">
@@ -195,30 +256,30 @@ export default function LecturerHome() {
       </View>
 
       <View className="mt-6 w-full px-3 flex justify-start items-center h-[80px]">
-        <View className="border-b-2 border-b-gray-400 w-full flex justify-between h-full items-center">
-          <Button
-            title={isAnyCourseSessionOpen ? "Close Session" : "Open Session"}
-            onPress={handleOpenSession}
-            customStyle={{
-              width: "90%",
-              backgroundColor: isAnyCourseSessionOpen ? "#A66D37" : "#DC924D",
-            }}
-          />
-        </View>
+        <Button
+          title={isAnyCourseSessionOpen ? "Close Session" : "Open Session"}
+          onPress={handleOpenSession}
+          customStyle={{
+            width: "90%",
+            backgroundColor: isAnyCourseSessionOpen ? "#A66D37" : "#DC924D",
+          }}
+        />
       </View>
 
-      <View className="relative flex justify-start items-start w-11/12 mt-5">
-        <ThemedText type="subtitle" customStyle={{ marginBottom: 15 }}>
-          Recent Sessions
-        </ThemedText>
+      <View className="mt-4 w-full h-[40%] px-3">
+        <View className="flex-1">
+          <View className="w-full flex flex-row justify-between">
+            <ThemedText type="subtitle">Recent</ThemedText>
+            <TouchableOpacity onPress={toggleMenu}>
+              <View style={styles.iconContainer}>
+                <FontAwesome5 name="th-large" size={24} color="white" />
+              </View>
+            </TouchableOpacity>
+          </View>
 
-        <View className="relative h-1/2 w-full">
-          <TouchableOpacity onPress={toggleMenu} style={styles.iconContainer}>
-            <FontAwesome5 name="book-reader" size={24} color="white" />
-          </TouchableOpacity>
           {isRecentLoading ? (
-            <View className="flex-1 flex justify-center items-center">
-              <ActivityIndicator size="large" color="#A66d37" />
+            <View className="w-full flex-1 flex justify-center items-center">
+              <ActivityIndicator size="large" color="#DC924D" />
             </View>
           ) : recentError ? (
             <ThemedText>Error: {recentError.message}</ThemedText>
@@ -273,6 +334,58 @@ export default function LecturerHome() {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
+
+      <Modal
+        visible={isPerimeterModalVisible}
+        transparent
+        animationType="slide"
+      >
+        <TouchableWithoutFeedback onPress={togglePerimeterView}>
+          <View style={styles.perimeterModalContainer}>
+            <View style={styles.perimeterModalContent}>
+              <ThemedText type="subtitle" className="mb-4">
+                Set Perimeter
+              </ThemedText>
+              <DropDownPicker
+                open={dropdownOpen}
+                value={
+                  isCustomSelected ? "" : perimeter !== null ? perimeter : null
+                }
+                items={dropdownItems}
+                setOpen={setDropdownOpen}
+                setValue={handlePerimeterSelection}
+                setItems={setDropdownItems}
+                placeholder="Select or enter a perimeter"
+                onChangeValue={handlePerimeterSelection}
+                style={{ marginBottom: 20 }}
+              />
+              {isCustomSelected && (
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter perimeter in meters"
+                  keyboardType="numeric"
+                  value={perimeterInput}
+                  onChangeText={handlePerimeterChange}
+                  onEndEditing={() => {
+                    if (perimeterInput === "") {
+                      setPerimeter(null);
+                    }
+                  }}
+                />
+              )}
+              <Button
+                title="OK"
+                onPress={handlePerimeterConfirm}
+                customStyle={{
+                  width: "50%",
+                  backgroundColor: "#DC924D",
+                  marginTop: 20,
+                }}
+              />
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </ThemedView>
   );
 }
@@ -311,5 +424,25 @@ const styles = StyleSheet.create({
     padding: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+  },
+  input: {
+    width: "100%",
+    borderBottomWidth: 1,
+    borderBottomColor: "#DC924D",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  perimeterModalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  perimeterModalContent: {
+    width: "80%",
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
   },
 });

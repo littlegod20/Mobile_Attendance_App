@@ -9,9 +9,10 @@ import { API_URL } from "@env";
 import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { InputConfig } from "../../utils/types";
+import Toast from "react-native-toast-message";
 
 const LogIn = () => {
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const inputConfigs: InputConfig[] = [
     {
       name: "email",
@@ -29,7 +30,7 @@ const LogIn = () => {
 
   const handleFormSubmit = async (formValues: { [key: string]: string }) => {
     try {
-      setLoading(false);
+      setLoading(true);
       const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {
@@ -40,12 +41,11 @@ const LogIn = () => {
           password: formValues.password,
         }),
       });
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(data.msg || `HTTP error! status: ${response.status}`);
       }
-
-      const data = await response.json();
 
       if (data.access_token) {
         // Store the token in state
@@ -61,8 +61,8 @@ const LogIn = () => {
         await SecureStore.setItemAsync(
           "school_id",
           String(data.user.school_id)
-        ); // Convert to string
-        await SecureStore.setItemAsync("year", String(data.user.year)); // Convert to string
+        );
+        await SecureStore.setItemAsync("year", String(data.user.year));
         await SecureStore.setItemAsync("password", data.user.password);
 
         console.log("Login successful");
@@ -74,16 +74,26 @@ const LogIn = () => {
           router.navigate({ pathname: "/lecturer/LecturerMain/(tabs)" });
         }
       } else {
+        setLoading(false);
         console.error("Login failed: No token received");
       }
-    } catch (error) {
-      console.error("Login error:", error);
+    } catch (error: any) {
+      // console.error("Login error:", error);
+      Toast.show({
+        type: "error",
+        text1: `Login Failed`,
+        text1Style: { fontSize: 14, color: "red" },
+        text2: `${error}` || "An unknown error occurred",
+        text2Style: { fontSize: 14, color: "black" },
+      });
       console.log(
         "login email>password:",
         formValues.email,
         formValues.password
       );
       // Handle login error (e.g., show error message to user)
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,7 +103,7 @@ const LogIn = () => {
         source={require("../../assets/images/screen_deco.png")}
         className="flex-1 w-full  justify-center items-center"
       >
-        {loading ? (
+        {loading === false ? (
           <>
             <View className="h-1/4 p-[20px] flex flex-col justify-end  items-start w-full">
               <ThemedText type="title">Log in to your account</ThemedText>
