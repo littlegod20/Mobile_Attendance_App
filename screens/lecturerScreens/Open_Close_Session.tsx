@@ -13,7 +13,7 @@ import fetchWithAuth from "../../services/fetchWithAuth";
 import { API_URL } from "@env";
 import { useCourseSession } from "../../contexts/CoursesSessionContext";
 import SessionCard from "./components/SessionCard";
-import getLocation from "../../utils/locationService";
+import getLocation from "../../services/locationService";
 import Toast from "react-native-toast-message";
 import { useLocalSearchParams } from "expo-router";
 
@@ -38,30 +38,9 @@ const Open_Closed_Session: React.FC = () => {
     geo();
   }, []);
 
-  const fetchLocation = async () => {
-    try {
-      const response = await fetchWithAuth(`${API_URL}/lecturer/location`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          location: location,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Lecturer location was not set");
-      }
-    } catch (error) {
-      console.error("Error getting location:", error);
-    }
-  };
-
   useEffect(() => {
     if (location) {
       setLocationLoading(false);
-      // Alert.alert("Location set. You are good to go!");
       Toast.show({
         type: "success",
         text1: "Location Set",
@@ -74,7 +53,6 @@ const Open_Closed_Session: React.FC = () => {
         bottomOffset: 30,
         topOffset: 40,
       });
-      fetchLocation();
     }
   }, [location]);
 
@@ -90,7 +68,6 @@ const Open_Closed_Session: React.FC = () => {
     action: "open" | "close"
   ): Promise<void> => {
     try {
-      await fetchLocation();
       if (location) {
         const response = await fetchWithAuth(`${API_URL}/session`, {
           method: "POST",
