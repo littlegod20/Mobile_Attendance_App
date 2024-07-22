@@ -256,14 +256,16 @@ export default function LecturerHome() {
       </View>
 
       <View className="mt-6 w-full px-3 flex justify-start items-center h-[80px]">
-        <Button
-          title={isAnyCourseSessionOpen ? "Close Session" : "Open Session"}
-          onPress={handleOpenSession}
-          customStyle={{
-            width: "90%",
-            backgroundColor: isAnyCourseSessionOpen ? "#A66D37" : "#DC924D",
-          }}
-        />
+        <View className="border-b-2 border-b-gray-400 w-full flex justify-between h-full items-center">
+          <Button
+            title={isAnyCourseSessionOpen ? "Close Session" : "Open Session"}
+            onPress={handleOpenSession}
+            customStyle={{
+              width: "90%",
+              backgroundColor: isAnyCourseSessionOpen ? "#A66D37" : "#DC924D",
+            }}
+          />
+        </View>
       </View>
 
       <View className="relative flex justify-start items-start w-11/12 mt-[10px]">
