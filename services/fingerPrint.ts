@@ -5,7 +5,7 @@ const authenticateWithFingerprint = async () => {
   const hasHardware = await LocalAuthentication.hasHardwareAsync();
   if (!hasHardware) {
     Alert.alert("This device does not support biometric authentication");
-    return;
+    return false;
   }
 
   const supportedTypes =
@@ -14,14 +14,14 @@ const authenticateWithFingerprint = async () => {
     !supportedTypes.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)
   ) {
     Alert.alert("Fingerprint authentication is not supported on this device.");
-    return;
+    return false;
   }
 
   const isEnrolled = await LocalAuthentication.isEnrolledAsync();
 
   if (!isEnrolled) {
     Alert.alert("No fingerprints are enrolled on this device.");
-    return;
+    return false;
   }
 
   const result = await LocalAuthentication.authenticateAsync({
@@ -30,8 +30,10 @@ const authenticateWithFingerprint = async () => {
 
   if (!result.success) {
     Alert.alert("Authentication failed. Please try again.");
-    return;
+    return false;
   }
+
+  return true;
 };
 
 export default authenticateWithFingerprint;
