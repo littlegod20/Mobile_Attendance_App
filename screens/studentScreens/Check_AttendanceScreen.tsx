@@ -109,6 +109,7 @@ const Check_AttendanceScreen = () => {
       setCourseSession(data);
     } catch (error) {
       console.error("Error fetching sessions data:", error);
+      console.log("programe", programme, "\nyear:", year);
     } finally {
       setIsLoading(false);
     }
@@ -116,8 +117,12 @@ const Check_AttendanceScreen = () => {
 
   const Authenticate = async (course_code: string, course_name: string) => {
     try {
-      await authenticateWithFingerprint();
-      await checkAttendance(course_name, course_code);
+      const isFingerPrintChecked = await authenticateWithFingerprint();
+      if (isFingerPrintChecked) {
+        await checkAttendance(course_name, course_code);
+      } else {
+        return;
+      }
     } catch (error) {
       console.error("Error during fingerprint authentication:", error);
     }
