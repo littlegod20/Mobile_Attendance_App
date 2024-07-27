@@ -5,19 +5,35 @@ const fetchWithAuth = async (url: string, options: RequestInit = {}) => {
 
   const defaultOptions: RequestInit = {
     headers: {
-      "Content-Type": "application/json",
       Authorization: token ? `Bearer ${token}` : "",
     },
   };
 
-  const mergedOptions = {
+  // Determine if we're sending FormData
+  const isFormData = options.body instanceof FormData;
+
+  // Set Content-Type only if it's not FormData and not already set
+  if (
+    !isFormData &&
+    !(options.headers as Record<string, string>)?.["Content-Type"]
+  ) {
+    (defaultOptions.headers as Record<string, string>)["Content-Type"] =
+      "application/json";
+  }
+
+  const mergedOptions: RequestInit = {
     ...defaultOptions,
     ...options,
     headers: {
       ...defaultOptions.headers,
-      ...options.headers,
+      ...(options.headers as Record<string, string>),
     },
   };
+
+  // For FormData, remove Content-Type to let the browser set it
+  if (isFormData) {
+    delete (mergedOptions.headers as Record<string, string>)["Content-Type"];
+  }
 
   // console.log("Fetching with options:", mergedOptions);
 
