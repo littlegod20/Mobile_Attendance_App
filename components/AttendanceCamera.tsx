@@ -57,8 +57,8 @@ const AttendanceCamera = ({ onCapture }: AttendanceCameraProps) => {
           <Ellipse
             cx="50%"
             cy="50%"
-            rx="35%"
-            ry="25%"
+            rx="40%"
+            ry="30%"
             stroke="white"
             strokeWidth="3"
             strokeDasharray="5,5"
