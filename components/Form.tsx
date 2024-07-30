@@ -68,7 +68,7 @@ const CustomForm: React.FC<CustomFormProps> = ({
 
   return (
     <View className="flex-1 justify-start mt-5 px-[20px] w-full">
-      <View className="mb-12 w-full">
+      <View className=" w-full">
         {inputs.map((input) => (
           <View key={input.name as string} className="mb-1">
             <ThemedText type="defaultSemiBold" className="mb-2 capitalize">
@@ -84,19 +84,19 @@ const CustomForm: React.FC<CustomFormProps> = ({
             />
           </View>
         ))}
-      </View>
-      <View>
-        <Button title={buttonTitle} onPress={handleSubmit} />
-        <ThemedText type="smalldefault" className="mt-2 text-center">
-          {link_path ? (
-            <>
-              {message}{" "}
-              <Link href={link_path} className="text-[#FF7A00] font-bold">
-                {link_name}
-              </Link>
-            </>
-          ) : null}
-        </ThemedText>
+        <View>
+          <Button title={buttonTitle} onPress={handleSubmit} />
+          <ThemedText type="smalldefault" className="mt-2 text-center">
+            {link_path ? (
+              <>
+                {message}{" "}
+                <Link href={link_path} className="text-[#FF7A00] font-bold">
+                  {link_name}
+                </Link>
+              </>
+            ) : null}
+          </ThemedText>
+        </View>
       </View>
     </View>
   );

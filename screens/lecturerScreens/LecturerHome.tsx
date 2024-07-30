@@ -29,6 +29,7 @@ import { useCourseSession } from "../../contexts/CoursesSessionContext";
 import CarouselWithPagination from "../../components/AttendanceProgress";
 import { CarouselProps, User } from "../../utils/types";
 import DropDownPicker from "react-native-dropdown-picker";
+import GoBackBtn from "../../components/GoBackBtn";
 
 export default function LecturerHome() {
   const { courses, setCourses } = useCourseSession();
@@ -231,6 +232,9 @@ export default function LecturerHome() {
 
   return (
     <ThemedView className="flex flex-1 items-center justify-start">
+      {/* <View className="h-1/6 flex justify-end items-center w-full mb-8">
+        <GoBackBtn path={"shared_screens/log_in"} />
+      </View> */}
       <View className=" h-[10%] w-11/12 flex-row items-center justify-start">
         <Avatar.Image
           size={55}
