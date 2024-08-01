@@ -136,11 +136,11 @@ const Open_Closed_Session: React.FC = () => {
             <ThemedText>No courses available</ThemedText>
           )}
         </View>
-        {/* <ThemedView>
+        <ThemedView>
           <ThemedText>
             Location: {location?.latitude}, {location?.longitude}
           </ThemedText>
-        </ThemedView> */}
+        </ThemedView>
       </ImageBackground>
     </ThemedView>
   );

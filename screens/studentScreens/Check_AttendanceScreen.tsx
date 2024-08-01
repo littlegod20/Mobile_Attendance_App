@@ -31,6 +31,7 @@ import {
 import Button from "../../components/Button";
 import AttendanceCamera from "../../components/AttendanceCamera";
 import LivenessCheckCamera from "./components/LivenessCheckCamera";
+import VideoRecorder from "./components/TestVid";
 
 interface CourseSessionProps {
   course_name: string;
@@ -244,7 +245,8 @@ const Check_AttendanceScreen = () => {
     setShowCamera(false);
     setIsAttendanceLoading(true);
     // Now you can use the captured image and selected course data
-    if (selectedCourse && isLivenessCheckPassed && image) {
+    //  && isLivenessCheckPassed && image
+    if (selectedCourse) {
       checkAttendance(
         selectedCourse.course_code,
         selectedCourse.course_name,
@@ -304,6 +306,7 @@ const Check_AttendanceScreen = () => {
         );
       }
 
+      console.log(data.msg);
       if (data.msg === "Attendance recorded successfully.") {
         Toast.show({
           type: "success",
@@ -401,20 +404,24 @@ const Check_AttendanceScreen = () => {
         source={require("../../assets/images/screen_deco.png")}
         className="flex-1 w-full items-center"
       >
-        {/* {!showCamera && ( */}
-        <View className="h-1/6 flex justify-end items-center w-full mb-8">
-          <GoBackBtn path={"/student/Main/(tabs)"} />
-        </View>
-        {/* )} */}
+        {!showCamera && (
+          <View className="h-1/6 flex justify-end items-center w-full mb-8">
+            <GoBackBtn path={"/student/Main/(tabs)"} />
+          </View>
+        )}
 
         <View className="w-full flex-1 flex items-center gap-7 p-2">
           {showCamera ? (
             isLivenessCheckActive ? (
-              <LivenessCheckCamera
-                socket={socket}
-                onLivenessCheckComplete={handleLivenessCheckComplete}
-              />
+              // <LivenessCheckCamera
+              //   socket={socket}
+              //   onLivenessCheckComplete={handleLivenessCheckComplete}
+              // />
+              <ThemedView className="w-full flex-1">
+                <VideoRecorder />
+              </ThemedView>
             ) : (
+              // <ThemedText>Hello</ThemedText>
               <AttendanceCamera onCapture={handleCapture} />
             )
           ) : (
@@ -449,8 +456,11 @@ const Check_AttendanceScreen = () => {
             </>
           )}
         </View>
-        <Button title="Test Socket Connection" onPress={testSocketConnection} />
-        <ThemedText>Socket Status: {socketStatus}</ThemedText>
+        {/* <Button title="Test Socket Connection" onPress={testSocketConnection} />
+        <ThemedText>Socket Status: {socketStatus}</ThemedText> */}
+        <ThemedText>
+          Location: {location?.latitude}, {location?.longitude}
+        </ThemedText>
       </ImageBackground>
     </ThemedView>
   );

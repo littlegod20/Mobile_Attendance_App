@@ -29,8 +29,8 @@ const AttendanceCamera = ({ onCapture }: AttendanceCameraProps) => {
       try {
         const photo = await cameraRef.current.takePictureAsync();
         if (photo) {
-          console.log("Captured");
           onCapture(photo);
+          console.log("Captured");
         } else {
           console.error("Failed to capture image: photo is undefined");
         }

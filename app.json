@@ -33,15 +33,11 @@
         "resizeMode": "cover",
         "backgroundColor": "#ffffff"
       },
-      "permissions": [
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION",
-        "RECORD_AUDIO"
-      ]
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
     },
     "web": {
       "bundler": "metro",
-      "favicon": "/assets/images/favicon.pngy"
+      "favicon": "/assets/images/favicon.png"
     },
     "assetBundlePatterns": ["**/*"],
     "plugins": [
@@ -55,7 +51,8 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": true
         }
-      ]
+      ],
+      "expo-video"
     ],
     "scheme": "attendance-checker",
     "runtimeVersion": "1.0.0"

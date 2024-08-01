@@ -46,18 +46,14 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     width: "100%",
-    // backgroundColor: "blue",
   },
   keyboardAvoiding: {
     flex: 1,
     width: "100%",
-    // backgroundColor: "yellow",
+    padding: 20,
   },
   scrollView: {
     flexGrow: 1,
-    // justifyContent: "center", // Ensure content is centered
-    // paddingHorizontal: 20, // Adjust as needed for padding
-    // paddingVertical: 10,
   },
 });
 

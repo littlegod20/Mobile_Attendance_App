@@ -12,11 +12,13 @@ import {
   CameraCapturedPicture,
   CameraView,
   Camera,
+  CameraRecordingOptions,
   useCameraPermissions,
 } from "expo-camera";
 import { Socket } from "socket.io-client";
 import { ThemedText } from "../../../contexts/ThemedText";
 import Button from "../../../components/Button";
+import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 
 interface LivenessCheckCameraProps {
   socket: Socket | null;
@@ -27,7 +29,7 @@ const LivenessCheckCamera: React.FC<LivenessCheckCameraProps> = ({
   socket,
   onLivenessCheckComplete,
 }) => {
-  const cameraRef = useRef<CameraView>(null);
+  const cameraRef = useRef<CameraView | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
 
   const [message, setMessage] = useState("");
@@ -42,15 +44,20 @@ const LivenessCheckCamera: React.FC<LivenessCheckCameraProps> = ({
     }
   }, [permission, requestPermission]);
 
+  // const instructions = [
+  //   "Blink your eyes twice",
+  //   "Turn your head slightly to the right, then left",
+  // ];
+
   const instructions = [
-    "Blink your eyes twice",
-    "Turn your head slightly to the right, then left",
+    "Blink your eyes twice within 3 seconds",
+    "Turn your head slightly to the right, then left within 3 seconds",
   ];
 
   useEffect(() => {
     if (socket) {
       socket.on("blink_result", handleBlinkResult);
-      socket.on("blink_result", handleHeadMovementResult);
+      socket.on("head_movement_result", handleHeadMovementResult);
     }
 
     return () => {
@@ -81,43 +88,152 @@ const LivenessCheckCamera: React.FC<LivenessCheckCameraProps> = ({
     setIsProcessing(false);
   };
 
-  const captureVideo = async (): Promise<string | null> => {
-    console.log("Started video capture");
+  // const captureVideo = async (): Promise<string[]> => {
+  //   console.log("Started photo capture sequence");
+  //   if (cameraRef.current) {
+  //     try {
+  //       const frames: string[] = [];
+  //       for (let i = 0; i < 2; i++) {
+  //         // Capture 10 frames
+  //         const photo = await cameraRef.current.takePictureAsync({
+  //           quality: 0.2,
+  //           base64: true,
+  //           skipProcessing: true,
+  //         });
+
+  //         // Compress the image
+  //         if (photo) {
+  //           const manipResult = await manipulateAsync(
+  //             photo.uri,
+  //             [{ resize: { width: 640 } }],
+  //             { compress: 0.5, format: SaveFormat.JPEG, base64: true }
+  //           );
+
+  //           frames.push(manipResult.base64 || "");
+  //           // await new Promise((resolve) => setTimeout(resolve, 100)); // Wait 300ms between frames
+  //         }
+  //       }
+  //       console.log("Photo sequence captured:", frames.length, "frames");
+  //       return frames;
+  //     } catch (error) {
+  //       console.error("Error in photo capture sequence:", error);
+  //       throw error;
+  //     }
+  //   } else {
+  //     console.error("Camera ref is null");
+  //     throw new Error("Camera is not ready");
+  //   }
+  // };
+
+  // const performStep = async () => {
+  //   if (isProcessing) return;
+
+  //   setIsProcessing(true);
+  //   setMessage("Capturing... Please perform the action.");
+
+  //   try {
+  //     const frames = await captureVideo();
+  //     if (frames.length > 0) {
+  //       console.log("Frames to send:", frames.length);
+  //       if (currentStep === 0) {
+  //         socket?.emit("check_blinks", { frames });
+  //       } else {
+  //         socket?.emit("check_head_movement", { frames });
+  //       }
+  //       setMessage("Processing... Please wait.");
+  //     } else {
+  //       throw new Error("No frames captured");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error in performStep:", error);
+  //     if (error instanceof Error) {
+  //       setMessage(`Error: ${error.message}. Please try again.`);
+  //     } else {
+  //       setMessage("An unknown error occurred. Please try again.");
+  //     }
+  //   } finally {
+  //     setIsProcessing(false);
+  //   }
+  // };
+
+  const captureImages = async (): Promise<string[]> => {
+    console.log("Started image capture sequence");
     if (cameraRef.current) {
       try {
-        console.log("Inside try catch");
-        const video = await cameraRef.current.recordAsync({
-          maxDuration: 3,
-        });
-        console.log("Video recording:", video);
-        if (video) {
-          console.log("Video captured:", video.uri);
-          return video.uri;
-        }
+        const frames: string[] = [];
+        const captureAndCompress = async () => {
+          const photo = await cameraRef.current?.takePictureAsync({
+            quality: 0.5,
+            base64: true,
+          });
+
+          if (!photo) {
+            throw new Error("Failed to capture photo");
+          }
+
+          const manipResult = await manipulateAsync(
+            photo.uri,
+            [{ resize: { width: 320 } }], // Reduced size for faster processing
+            { compress: 0.5, format: SaveFormat.JPEG, base64: true }
+          );
+
+          return manipResult.base64 || "";
+        };
+
+        // Capture first image
+        frames.push(await captureAndCompress());
+
+        // Wait for 1.5 seconds
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
+        // Capture second image
+        frames.push(await captureAndCompress());
+
+        // Wait for another 1.5 seconds
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+
+        // Capture third image
+        frames.push(await captureAndCompress());
+
+        console.log("Image sequence captured:", frames.length, "frames");
+        return frames;
       } catch (error) {
-        console.error("Error capturing video:", error);
+        console.error("Error in image capture sequence:", error);
+        throw error;
       }
+    } else {
+      console.error("Camera ref is null");
+      throw new Error("Camera is not ready");
     }
-    return null;
   };
 
   const performStep = async () => {
     if (isProcessing) return;
 
     setIsProcessing(true);
-    setMessage("Processing...");
+    setMessage("Capturing... Please perform the action.");
 
-    const videoUri = await captureVideo();
-    if (videoUri) {
-      const frames = [videoUri]; // Send the compressed video URI as frames
-      console.log("Frames to send:", frames);
-      if (currentStep === 0) {
-        socket?.emit("check_blinks", { frames });
+    try {
+      const frames = await captureImages();
+      if (frames.length > 0) {
+        console.log("Frames to send:", frames.length);
+        if (currentStep === 0) {
+          socket?.emit("check_blinks", { frames });
+        } else {
+          socket?.emit("check_head_movement", { frames });
+        }
+        setMessage("Processing... Please wait.");
       } else {
-        socket?.emit("check_head_movement", { frames });
+        throw new Error("No frames captured");
       }
-    } else {
-      setMessage("Failed to compress video. Please try again.");
+    } catch (error) {
+      console.error("Error in performStep:", error);
+      if (error instanceof Error) {
+        setMessage(`Error: ${error.message}. Please try again.`);
+      } else {
+        setMessage("An unknown error occurred. Please try again.");
+      }
+    } finally {
       setIsProcessing(false);
     }
   };
