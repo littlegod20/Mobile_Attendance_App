@@ -238,7 +238,7 @@ export default function LecturerHome() {
       <View className=" h-[10%] w-11/12 flex-row items-center justify-start">
         <Avatar.Image
           size={55}
-          source={require("../../assets/images/icon.png")}
+          source={require("../../assets/rollcall.png")}
           theme={darkTheme}
         />
         <View className="ml-3">
