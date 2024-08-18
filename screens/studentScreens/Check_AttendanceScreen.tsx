@@ -31,7 +31,7 @@ import {
 import Button from "../../components/Button";
 import AttendanceCamera from "../../components/AttendanceCamera";
 import LivenessCheckCamera from "./components/LivenessCheckCamera";
-import VideoRecorder from "./components/TestVid";
+import LivenessDetection from "./components/LivenessDetection";
 
 interface CourseSessionProps {
   course_name: string;
@@ -413,15 +413,8 @@ const Check_AttendanceScreen = () => {
         <View className="w-full flex-1 flex items-center gap-7 p-2">
           {showCamera ? (
             isLivenessCheckActive ? (
-              // <LivenessCheckCamera
-              //   socket={socket}
-              //   onLivenessCheckComplete={handleLivenessCheckComplete}
-              // />
-              <ThemedView className="w-full flex-1">
-                <VideoRecorder />
-              </ThemedView>
+              <LivenessDetection />
             ) : (
-              // <ThemedText>Hello</ThemedText>
               <AttendanceCamera onCapture={handleCapture} />
             )
           ) : (
@@ -458,9 +451,9 @@ const Check_AttendanceScreen = () => {
         </View>
         {/* <Button title="Test Socket Connection" onPress={testSocketConnection} />
         <ThemedText>Socket Status: {socketStatus}</ThemedText> */}
-        <ThemedText>
+        {/* <ThemedText>
           Location: {location?.latitude}, {location?.longitude}
-        </ThemedText>
+        </ThemedText> */}
       </ImageBackground>
     </ThemedView>
   );
