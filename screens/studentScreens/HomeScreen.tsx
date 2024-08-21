@@ -6,12 +6,13 @@ import {
   Modal,
   ImageBackground,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { Avatar } from "react-native-paper";
 import { ThemedText } from "../../contexts/ThemedText";
 import Button from "../../components/Button";
-import { Link, router } from "expo-router";
-import { darkTheme } from "../../themes/themes";
+import { router } from "expo-router";
+import { darkTheme, lightTheme } from "../../themes/themes";
 import { ThemedView } from "../../contexts/ThemedView";
 import { FontAwesome5 } from "@expo/vector-icons";
 import RecentCard from "../../components/RecentsCard";
@@ -19,14 +20,12 @@ import { FlatList } from "react-native";
 import { useState, useRef, useEffect } from "react";
 import TimeTableCourse from "../../components/TimeTableCourse";
 import { TouchableWithoutFeedback } from "react-native";
-import CarouselCardItem from "../../components/AttendanceProgress";
 import { API_URL } from "@env";
 import * as SecureStore from "expo-secure-store";
 import fetchWithAuth from "../../services/fetchWithAuth";
 import { CarouselProps, User } from "../../utils/types";
 import CarouselWithPagination from "../../components/AttendanceProgress";
 import { fetchAttendanceData } from "../../services/attendanceService";
-import GoBackBtn from "../../components/GoBackBtn";
 
 export type Course = {
   course_name: string;
@@ -69,9 +68,9 @@ const Home: React.FC = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    console.log("data:", attendanceData);
-  }, [attendanceData]);
+  // useEffect(() => {
+  //   console.log("data:", attendanceData);
+  // }, [attendanceData]);
 
   const fetchCarouselAttendance = async () => {
     const data = await fetchAttendanceData();
@@ -92,7 +91,6 @@ const Home: React.FC = () => {
         });
       } else {
         console.error("Some user data is missing from secure storage");
-        // console.log("SecureData:", programme, year);
       }
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -151,27 +149,18 @@ const Home: React.FC = () => {
 
   return (
     <ThemedView className="flex flex-1 items-center justify-start">
-      {/* <View className="h-1/6 flex justify-end items-center w-full mb-8">
-        <GoBackBtn path={"shared_screens/log_in"} />
-      </View> */}
       <View className=" h-[10%] w-11/12 flex-row items-center justify-start">
-        <Avatar.Image
-          size={55}
-          source={require("../../assets/rollcall.png")}
-          theme={darkTheme}
-        />
-        <View className="ml-3">
-          <ThemedText type="subtitle" style={{ fontSize: 22 }}>
-            Hello,
-          </ThemedText>
-          <ThemedText
-            type="defaultSemiBold"
-            numberOfLines={1}
-            ellipsizeMode="tail"
-            className="w-44 uppercase"
-          >
-            {user?.name}
-          </ThemedText>
+        <View className="ml-3 flex flex-row justify-center items-center">
+          <Image source={require("../../assets/images/user.png")} alt="user" />
+          <View className="ml-2">
+            <ThemedText type="defaultSemiBold" className="uppercase">
+              {user?.name?.split(" ")[0]}
+            </ThemedText>
+
+            <ThemedText type="mediumRegular" className="uppercase">
+              {user?.name?.split(" ").slice(1).join(" ")}
+            </ThemedText>
+          </View>
         </View>
       </View>
 

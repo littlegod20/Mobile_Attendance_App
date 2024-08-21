@@ -5,6 +5,7 @@ import {
   ScrollView,
   Dimensions,
   Animated,
+  Image,
 } from "react-native";
 import { ThemedView } from "../../contexts/ThemedView";
 import GoBackBtn from "../../components/GoBackBtn";
@@ -113,19 +114,17 @@ export default function Profile() {
   return (
     <ThemedView className="flex-1 w-full ">
       <View className="w-full mb-8 flex flex-row p-4 items-center ">
-        <Avatar.Image
-          size={60}
-          source={require("../../assets/rollcall.png")}
-          theme={darkTheme}
-        />
-        <View className="flex  ml-3">
-          <ThemedText type="defaultSemiBold" className="uppercase">
-            {user?.name?.split(" ")[0]}
-          </ThemedText>
+        <View className="flex flex-row items-center ml-3">
+          <Image source={require("../../assets/images/user.png")} alt="user" />
+          <View className="ml-2">
+            <ThemedText type="defaultSemiBold" className="uppercase">
+              {user?.name?.split(" ")[0]}
+            </ThemedText>
 
-          <ThemedText type="mediumRegular" className="uppercase">
-            {user?.name?.split(" ").slice(1).join(" ")}
-          </ThemedText>
+            <ThemedText type="mediumRegular" className="uppercase">
+              {user?.name?.split(" ").slice(1).join(" ")}
+            </ThemedText>
+          </View>
         </View>
       </View>
 
