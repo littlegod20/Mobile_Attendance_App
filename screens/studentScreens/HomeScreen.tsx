@@ -8,16 +8,14 @@ import {
   ActivityIndicator,
   Image,
 } from "react-native";
-import { Avatar } from "react-native-paper";
 import { ThemedText } from "../../contexts/ThemedText";
 import Button from "../../components/Button";
 import { router } from "expo-router";
-import { darkTheme, lightTheme } from "../../themes/themes";
 import { ThemedView } from "../../contexts/ThemedView";
 import { FontAwesome5 } from "@expo/vector-icons";
 import RecentCard from "../../components/RecentsCard";
 import { FlatList } from "react-native";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import TimeTableCourse from "../../components/TimeTableCourse";
 import { TouchableWithoutFeedback } from "react-native";
 import { API_URL } from "@env";

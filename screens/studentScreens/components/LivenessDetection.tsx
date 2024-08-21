@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import {
   useCameraDevice,
   Camera,
@@ -10,9 +10,7 @@ import axios from "axios";
 import PermissionPage from "./CameraPermissionPage";
 import NoCameraDeviceError from "./NoCameraDeviceError";
 import Button from "../../../components/Button";
-import Base64 from "react-native-base64";
 import * as FileSystem from "expo-file-system";
-import { router } from "expo-router";
 
 type LivenessProps = {
   onLiveness: (val: boolean) => void;

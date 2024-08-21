@@ -162,7 +162,7 @@ export default function LecturerProfile() {
           <DetailForm serialNo={user?.school_id} programme={user?.programme} />
         </View>
         {/* Edit info section */}
-        <View style={{ width: width }}>
+        <View className="p-4" style={{ width: width }}>
           <CustomForm
             inputs={inputConfigs}
             onSubmit={handleSaveDetails}
