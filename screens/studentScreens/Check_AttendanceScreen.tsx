@@ -31,7 +31,7 @@ import {
 import Button from "../../components/Button";
 import AttendanceCamera from "../../components/AttendanceCamera";
 import LivenessCheckCamera from "./components/LivenessCheckCamera";
-import VideoRecorder from "./components/TestVid";
+import LivenessDetection from "./components/DummyLiveness";
 
 interface CourseSessionProps {
   course_name: string;
@@ -62,56 +62,56 @@ const Check_AttendanceScreen = () => {
     fetchUserData();
   }, []);
 
-  useEffect(() => {
-    // initializing socket connectionz
-    const API_URL = "http://192.168.8.131:8000";
+  // useEffect(() => {
+  //   // initializing socket connectionz
+  //   const API_URL = "http://192.168.8.131:8000";
 
-    const newSocket = io(API_URL, {
-      transports: ["websocket"],
-      upgrade: false,
-      forceNew: true,
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-    });
-    newSocket.on("connect", () => {
-      console.log("WebSocket connected:", newSocket.id);
-      setSocketStatus("Connected");
-    });
+  //   const newSocket = io(API_URL, {
+  //     transports: ["websocket"],
+  //     upgrade: false,
+  //     forceNew: true,
+  //     reconnection: true,
+  //     reconnectionAttempts: 5,
+  //     reconnectionDelay: 1000,
+  //   });
+  //   newSocket.on("connect", () => {
+  //     console.log("WebSocket connected:", newSocket.id);
+  //     setSocketStatus("Connected");
+  //   });
 
-    newSocket.on("disconnect", (reason) => {
-      console.log("WebSocket disconnected:", reason);
-      setSocketStatus("Disconnected");
-    });
+  //   newSocket.on("disconnect", (reason) => {
+  //     console.log("WebSocket disconnected:", reason);
+  //     setSocketStatus("Disconnected");
+  //   });
 
-    newSocket.on("connect_error", (error) => {
-      console.log("Connection error:", error);
-      setSocketStatus("Error: " + error.message);
-    });
+  //   newSocket.on("connect_error", (error) => {
+  //     console.log("Connection error:", error);
+  //     setSocketStatus("Error: " + error.message);
+  //   });
 
-    //test adding listener for 'pong' event
-    newSocket.on("customPong", (data) => {
-      console.log("Recieved customPong from server:", data);
-      setSocketStatus("Received customPong: " + JSON.stringify(data));
-    });
+  //   //test adding listener for 'pong' event
+  //   newSocket.on("customPong", (data) => {
+  //     console.log("Recieved customPong from server:", data);
+  //     setSocketStatus("Received customPong: " + JSON.stringify(data));
+  //   });
 
-    setSocket(newSocket);
+  //   setSocket(newSocket);
 
-    return () => {
-      if (newSocket) newSocket.disconnect();
-    };
-  }, []);
+  //   return () => {
+  //     if (newSocket) newSocket.disconnect();
+  //   };
+  // }, []);
 
-  const testSocketConnection = () => {
-    if (socket && socket.connected) {
-      console.log("Sending ping to server");
-      socket.emit("customPing", { message: "customPing from client!" });
-      setSocketStatus("customPing sent");
-    } else {
-      console.log("Socket not connected");
-      setSocketStatus("Socket not connected");
-    }
-  };
+  // const testSocketConnection = () => {
+  //   if (socket && socket.connected) {
+  //     console.log("Sending ping to server");
+  //     socket.emit("customPing", { message: "customPing from client!" });
+  //     setSocketStatus("customPing sent");
+  //   } else {
+  //     console.log("Socket not connected");
+  //     setSocketStatus("Socket not connected");
+  //   }
+  // };
 
   // getting location of student
   // useEffect(() => {
@@ -413,14 +413,15 @@ const Check_AttendanceScreen = () => {
         <View className="w-full flex-1 flex items-center gap-7 p-2">
           {showCamera ? (
             isLivenessCheckActive ? (
+              <LivenessDetection />
+            ) : (
               // <LivenessCheckCamera
               //   socket={socket}
               //   onLivenessCheckComplete={handleLivenessCheckComplete}
               // />
-              <ThemedView className="w-full flex-1">
-                <VideoRecorder />
-              </ThemedView>
-            ) : (
+              // <ThemedView className="w-full flex-1">
+              //   <VideoRecorder />
+              // </ThemedView>
               // <ThemedText>Hello</ThemedText>
               <AttendanceCamera onCapture={handleCapture} />
             )
