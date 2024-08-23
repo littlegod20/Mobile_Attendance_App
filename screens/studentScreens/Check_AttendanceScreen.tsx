@@ -55,6 +55,7 @@ const Check_AttendanceScreen = () => {
     useState<boolean>(false);
   const [isLivenessCheckActive, setIsLivenessCheckActive] = useState(false);
   const [isLivenessCheckPassed, setIsLivenessCheckPassed] = useState(false);
+  const [countFaceFail, setCountFaceFail] = useState(0);
 
   useEffect(() => {
     fetchUserData();
@@ -136,19 +137,6 @@ const Check_AttendanceScreen = () => {
     }
   };
 
-  // const Authenticate = async (course_code: string, course_name: string) => {
-  //   try {
-  //     const isFingerPrintChecked = await authenticateWithFingerprint();
-  //     if (isFingerPrintChecked) {
-  //       await checkAttendance(course_name, course_code);
-  //     } else {
-  //       return;
-  //     }
-  //   } catch (error) {
-  //     console.error("Error during fingerprint authentication:", error);
-  //   }
-  // };
-
   // location greater than 50 meters
   // const location: LocationCoords = {
   //   latitude: 37.4224983,
@@ -195,46 +183,257 @@ const Check_AttendanceScreen = () => {
     }
   };
 
-  const handleCapture = (image: CameraCapturedPicture | null) => {
-    setCapturedImage(image);
-    setShowCamera(false);
-    setIsAttendanceLoading(true);
-    // Now you can use the captured image and selected course data
-    //  && isLivenessCheckPassed && image
-    if (selectedCourse) {
-      checkAttendance(
-        selectedCourse.course_code,
-        selectedCourse.course_name,
-        image,
-        attendance_checked,
-        location
-      );
-    } else {
+  // const handleCapture = (image: CameraCapturedPicture | null) => {
+  //   setCapturedImage(image);
+  //   setShowCamera(false);
+  //   setIsAttendanceLoading(true);
+  //   // Now you can use the captured image and selected course data
+  //   //  && isLivenessCheckPassed && image
+  //   if (selectedCourse) {
+  //     checkAttendance(
+  //       selectedCourse.course_code,
+  //       selectedCourse.course_name,
+  //       attendance_checked,
+  //       location,
+  //       image
+  //     );
+  //   } else {
+  //     Toast.show({
+  //       type: "error",
+  //       text1: "Attendance Check Failed",
+  //       text2: "Please try again",
+  //       position: "top",
+  //       visibilityTime: 3000,
+  //     });
+  //     setIsAttendanceLoading(false);
+  //   }
+  // };
+
+  // const checkAttendance = async (
+  //   course_code: string,
+  //   course_name: string,
+  //   attendance_checked: boolean,
+  //   location: LocationCoords,
+  //   image?: CameraCapturedPicture | null
+  // ) => {
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("course_name", course_name);
+  //     formData.append("course_code", course_code);
+  //     formData.append("location", JSON.stringify(location));
+  //     formData.append("attendance_checked", attendance_checked.toString());
+  //     formData.append("course_name", course_name);
+
+  //     if (image) {
+  //       formData.append("image", {
+  //         uri: image.uri,
+  //         type: "image/jpeg",
+  //         name: `${user?.name}.jpeg`,
+  //       } as any);
+  //     }
+
+  //     console.log("Sending request to:", `${API_URL}/attendance`);
+  //     console.log("Request body:", formData);
+
+  //     if (image){}
+  //     const response = await fetchWithAuth(`${API_URL}/attendance`, {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+
+  //     console.log("sent successfully");
+  //     const data = await response.json();
+
+  //     if (!response.ok) {
+  //       throw new Error(
+  //         data.msg || "An error occurred while checking attendance"
+  //       );
+  //     }
+
+  //     console.log(data.msg);
+  //     if (data.msg === "Attendance recorded successfully.") {
+  //       Toast.show({
+  //         type: "success",
+  //         text1: "Sucess!",
+  //         text1Style: { fontSize: 14, color: "green" },
+  //         text2: `Attendance for ${course_name} recorded successfully`,
+  //         position: "top",
+  //         visibilityTime: 20000,
+  //         autoHide: true,
+  //         topOffset: 30,
+  //         bottomOffset: 40,
+  //       });
+
+  //       await refreshCourseSessions();
+  //       console.log("successful:", data.msg);
+  //     } else if (data.msg === "You are not within the required location") {
+  //       Toast.show({
+  //         type: "error",
+  //         text1: "Failed to check attendance",
+  //         text1Style: { fontSize: 14, color: "red" },
+  //         text2: "You are not within the required location",
+  //         position: "top",
+  //         visibilityTime: 5000,
+  //         autoHide: true,
+  //         topOffset: 30,
+  //         bottomOffset: 40,
+  //       });
+  //       console.log("location error:", data.msg);
+  //     } else {
+  //       Toast.show({
+  //         type: "error",
+  //         text1: "Error!",
+  //         text2: `${data.msg}`,
+  //         position: "top",
+  //         visibilityTime: 5000,
+  //         autoHide: true,
+  //         topOffset: 30,
+  //         bottomOffset: 40,
+  //       });
+  //       console.log("other:", data.msg);
+  //     }
+  //   } catch (error: any) {
+  //     Toast.show({
+  //       type: "error",
+  //       text1: "Recognition error!",
+  //       text2: `Face recognition failed. Please try again.`,
+  //       position: "top",
+  //       visibilityTime: 5000,
+  //       autoHide: true,
+  //       topOffset: 30,
+  //       bottomOffset: 40,
+  //     });
+  //   } finally {
+  //     setIsAttendanceLoading(false); // Reset loading state after completion
+  //   }
+  // };
+
+  useEffect(() => {
+    console.log("Count faces:", countFaceFail);
+  });
+
+  const MAX_FACE_ATTEMPTS = 3;
+
+  const Authenticate = async (image: CameraCapturedPicture | null) => {
+    try {
+      if (selectedCourse) {
+        if (countFaceFail < MAX_FACE_ATTEMPTS) {
+          // Attempt to check attendance with facial recognition
+          const result = await checkAttendance(
+            selectedCourse.course_code,
+            selectedCourse.course_name,
+            attendance_checked,
+            location,
+            image
+          );
+
+          if (result.success) {
+            // Facial recognition succeeded
+            Toast.show({
+              type: "success",
+              text1: "Attendance Recorded",
+              text2: "Your attendance has been successfully recorded.",
+              position: "top",
+              visibilityTime: 3000,
+            });
+            setShowCamera(false);
+            await refreshCourseSessions();
+          } else {
+            // Facial recognition failed
+            setCountFaceFail((prev) => prev + 1);
+            if (countFaceFail + 1 >= MAX_FACE_ATTEMPTS) {
+              // Switch to fingerprint after reaching max attempts
+              await switchToFingerprint();
+              await refreshCourseSessions();
+              setShowCamera(false);
+            } else {
+              // Show error message and allow retry
+              Toast.show({
+                type: "error",
+                text1: "Facial Recognition Failed",
+                text2: `Attempt ${
+                  countFaceFail + 1
+                }/${MAX_FACE_ATTEMPTS}. Please try again.`,
+                position: "top",
+                visibilityTime: 3000,
+              });
+              setShowCamera(true); // Allow another attempt
+            }
+          }
+        } else {
+          // Max attempts reached, use fingerprint
+          setShowCamera(false);
+          await switchToFingerprint();
+        }
+      }
+    } catch (error) {
+      console.error("Error during authentication:", error);
       Toast.show({
         type: "error",
-        text1: "Attendance Check Failed",
-        text2: "Please try again",
+        text1: "Authentication Error",
+        text2: "An unexpected error occurred. Please try again.",
         position: "top",
         visibilityTime: 3000,
       });
-      setIsAttendanceLoading(false);
     }
   };
 
+  const switchToFingerprint = async () => {
+    try {
+      const fingerprintResult = await authenticateWithFingerprint();
+      if (fingerprintResult) {
+        // Fingerprint authentication succeeded, check attendance without image
+        await checkAttendance(
+          selectedCourse!.course_code,
+          selectedCourse!.course_name,
+          attendance_checked,
+          location
+        );
+        Toast.show({
+          type: "success",
+          text1: "Attendance Recorded",
+          text2:
+            "Your attendance has been successfully recorded using fingerprint.",
+          position: "top",
+          visibilityTime: 3000,
+        });
+        await refreshCourseSessions();
+      } else {
+        // Fingerprint authentication failed
+        Toast.show({
+          type: "error",
+          text1: "Fingerprint Authentication Failed",
+          text2: "Please try again or contact support.",
+          position: "top",
+          visibilityTime: 3000,
+        });
+      }
+    } catch (error) {
+      console.error("Error during fingerprint authentication:", error);
+      Toast.show({
+        type: "error",
+        text1: "Fingerprint Error",
+        text2: "An unexpected error occurred. Please try again.",
+        position: "top",
+        visibilityTime: 3000,
+      });
+    }
+  };
+
+  // Modify the checkAttendance function to return a success status
   const checkAttendance = async (
     course_code: string,
     course_name: string,
-    image: CameraCapturedPicture | null,
     attendance_checked: boolean,
-    location: LocationCoords
-  ) => {
+    location: LocationCoords,
+    image?: CameraCapturedPicture | null
+  ): Promise<{ success: boolean; msg: string }> => {
     try {
       const formData = new FormData();
       formData.append("course_name", course_name);
       formData.append("course_code", course_code);
       formData.append("location", JSON.stringify(location));
       formData.append("attendance_checked", attendance_checked.toString());
-      formData.append("course_name", course_name);
 
       if (image) {
         formData.append("image", {
@@ -244,15 +443,11 @@ const Check_AttendanceScreen = () => {
         } as any);
       }
 
-      console.log("Sending request to:", `${API_URL}/attendance`);
-      console.log("Request body:", formData);
-
       const response = await fetchWithAuth(`${API_URL}/attendance`, {
         method: "POST",
         body: formData,
       });
 
-      console.log("sent successfully");
       const data = await response.json();
 
       if (!response.ok) {
@@ -261,61 +456,13 @@ const Check_AttendanceScreen = () => {
         );
       }
 
-      console.log(data.msg);
-      if (data.msg === "Attendance recorded successfully.") {
-        Toast.show({
-          type: "success",
-          text1: "Sucess!",
-          text1Style: { fontSize: 14, color: "green" },
-          text2: `Attendance for ${course_name} recorded successfully`,
-          position: "top",
-          visibilityTime: 20000,
-          autoHide: true,
-          topOffset: 30,
-          bottomOffset: 40,
-        });
-
-        await refreshCourseSessions();
-        console.log("successful:", data.msg);
-      } else if (data.msg === "You are not within the required location") {
-        Toast.show({
-          type: "error",
-          text1: "Failed to check attendance",
-          text1Style: { fontSize: 14, color: "red" },
-          text2: "You are not within the required location",
-          position: "top",
-          visibilityTime: 5000,
-          autoHide: true,
-          topOffset: 30,
-          bottomOffset: 40,
-        });
-        console.log("location error:", data.msg);
-      } else {
-        Toast.show({
-          type: "error",
-          text1: "Error!",
-          text2: `${data.msg}`,
-          position: "top",
-          visibilityTime: 5000,
-          autoHide: true,
-          topOffset: 30,
-          bottomOffset: 40,
-        });
-        console.log("other:", data.msg);
-      }
+      return {
+        success: data.msg === "Attendance recorded successfully.",
+        msg: data.msg,
+      };
     } catch (error: any) {
-      Toast.show({
-        type: "error",
-        text1: "Recognition error!",
-        text2: `Face recognition failed. Please try again.`,
-        position: "top",
-        visibilityTime: 5000,
-        autoHide: true,
-        topOffset: 30,
-        bottomOffset: 40,
-      });
-    } finally {
-      setIsAttendanceLoading(false); // Reset loading state after completion
+      // console.error("Error checking attendance:", error);
+      return { success: false, msg: error.message };
     }
   };
 
@@ -369,7 +516,7 @@ const Check_AttendanceScreen = () => {
             isLivenessCheckActive ? (
               <LivenessDetection onLiveness={handleLivenessCheckComplete} />
             ) : (
-              <AttendanceCamera onCapture={handleCapture} />
+              <AttendanceCamera onCapture={Authenticate} />
             )
           ) : (
             <>

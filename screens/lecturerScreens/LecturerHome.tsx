@@ -8,6 +8,7 @@ import {
   Alert,
   ActivityIndicator,
   TextInput,
+  Image,
 } from "react-native";
 import { Avatar } from "react-native-paper";
 import { ThemedText } from "../../contexts/ThemedText";
@@ -232,27 +233,18 @@ export default function LecturerHome() {
 
   return (
     <ThemedView className="flex flex-1 items-center justify-start">
-      {/* <View className="h-1/6 flex justify-end items-center w-full mb-8">
-        <GoBackBtn path={"shared_screens/log_in"} />
-      </View> */}
       <View className=" h-[10%] w-11/12 flex-row items-center justify-start">
-        <Avatar.Image
-          size={55}
-          source={require("../../assets/rollcall.png")}
-          theme={darkTheme}
-        />
-        <View className="ml-3">
-          <ThemedText type="subtitle" style={{ fontSize: 22 }}>
-            Hello
-          </ThemedText>
-          <ThemedText
-            type="default"
-            className="uppercase w-44"
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >
-            {user?.name}
-          </ThemedText>
+        <View className="ml-3 flex flex-row justify-center items-center">
+          <Image source={require("../../assets/images/user.png")} alt="user" />
+          <View className="ml-2">
+            <ThemedText type="defaultSemiBold" className="uppercase">
+              {user?.name?.split(" ")[0]}
+            </ThemedText>
+
+            <ThemedText type="mediumRegular" className="uppercase">
+              {user?.name?.split(" ").slice(1).join(" ")}
+            </ThemedText>
+          </View>
         </View>
       </View>
       <View className="mt-6 h-[25%] w-full flex justify-center items-center">
