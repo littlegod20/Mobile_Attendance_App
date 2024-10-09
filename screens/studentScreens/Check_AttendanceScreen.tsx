@@ -137,17 +137,18 @@ const Check_AttendanceScreen = () => {
     }
   };
 
-  // location greater than 50 meters
+  // for successfull attendance
+  const location: LocationCoords = {
+    latitude: 6.672416317568607,
+    longitude: -1.5656552951978318,
+  };
+
+  // for unsuccessful attendance
   // const location: LocationCoords = {
   //   latitude: 37.4224983,
   //   longitude: -122.0845,
   // };
 
-  // location lesser that 50 meters
-  const location: LocationCoords = {
-    latitude: 37.4220383,
-    longitude: -122.08404,
-  };
   const attendance_checked = true;
 
   const handleCardClick = (course_name: string, course_code: string) => {
@@ -338,6 +339,16 @@ const Check_AttendanceScreen = () => {
             });
             setShowCamera(false);
             await refreshCourseSessions();
+          } else if (
+            result.msg === "You are not within the required location"
+          ) {
+            Toast.show({
+              type: "error",
+              text1: "Location error",
+              text2: "You are not in the required location",
+              position: "top",
+              visibilityTime: 3000,
+            });
           } else {
             // Facial recognition failed
             setCountFaceFail((prev) => prev + 1);

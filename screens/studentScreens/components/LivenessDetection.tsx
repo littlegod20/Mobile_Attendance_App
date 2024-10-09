@@ -161,6 +161,7 @@ const LivenessDetection = ({ onLiveness }: LivenessProps) => {
           <View className="absolute p-5 flex justify-center w-full">
             <Button title="Capture and Analyze" onPress={takePhoto} />
           </View>
+          <Text>{images.length} Photo(s) captured!</Text>
         </View>
       )}
       {livenessResult && (
@@ -175,7 +176,6 @@ const LivenessDetection = ({ onLiveness }: LivenessProps) => {
           {images.map((img, index) => (
             <Image key={index} source={{ uri: `file://${img.path}` }} />
           ))}
-          <Text>{images.length} Photo(s) captured!</Text>
         </View>
       )} */}
     </View>
