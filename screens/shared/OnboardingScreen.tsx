@@ -113,9 +113,6 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     alignItems: "center",
-    // marginTop: 8,
-    // marginBottom: 6,
-    // backgroundColor: "yellow",
   },
   title: {
     fontSize: 24,

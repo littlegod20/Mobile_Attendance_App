@@ -3,7 +3,6 @@ import {
   ImageBackground,
   FlatList,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ThemedView } from "../../contexts/ThemedView";

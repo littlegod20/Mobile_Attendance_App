@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "RollCall",
-    "slug": "roll-call",
+    "name": "attendance",
+    "slug": "attendance",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/rollcall.png",
@@ -20,7 +20,9 @@
       },
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "We need your location to provide better services.",
-        "NSLocationAlwaysUsageDescription": "We need your location to provide better services."
+        "NSLocationAlwaysUsageDescription": "We need your location to provide better services.",
+        "NSCameraUsageDescription": "$(PRODUCT_NAME) needs access to your Camera.",
+        "NSMicrophoneUsageDescription": "$(PRODUCT_NAME) needs access to your Microphone."
       }
     },
     "android": {
@@ -36,14 +38,19 @@
       "permissions": [
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
-        "RECORD_AUDIO"
-      ]
+        "RECORD_AUDIO",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.little_god4.attendance"
     },
     "web": {
       "bundler": "metro",
       "favicon": "/assets/images/favicon.png"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "plugins": [
       "expo-router",
       "expo-font",
@@ -56,9 +63,25 @@
           "recordAudioAndroid": true
         }
       ],
-      "expo-video"
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "$(PRODUCT_NAME) needs access to your Camera.",
+          "enableMicrophonePermission": true,
+          "microphonePermissionText": "$(PRODUCT_NAME) needs access to your Microphone."
+        }
+      ]
     ],
     "scheme": "attendance-checker",
-    "runtimeVersion": "1.0.0"
+    "runtimeVersion": "1.0.0",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "0a662593-ea3e-40ff-9c73-e1d42e2fa585"
+      }
+    },
+    "owner": "little_god4"
   }
 }

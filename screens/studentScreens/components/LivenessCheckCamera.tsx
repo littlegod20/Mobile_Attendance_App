@@ -1,20 +1,6 @@
-// components/LivenessCheckCamera.tsx
-
 import React, { useEffect, useRef, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  ActivityIndicator,
-  TouchableOpacity,
-  Text,
-} from "react-native";
-import {
-  CameraCapturedPicture,
-  CameraView,
-  Camera,
-  CameraRecordingOptions,
-  useCameraPermissions,
-} from "expo-camera";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
+import { CameraView, useCameraPermissions } from "expo-camera";
 import { Socket } from "socket.io-client";
 import { ThemedText } from "../../../contexts/ThemedText";
 import Button from "../../../components/Button";
@@ -44,13 +30,8 @@ const LivenessCheckCamera: React.FC<LivenessCheckCameraProps> = ({
     }
   }, [permission, requestPermission]);
 
-  // const instructions = [
-  //   "Blink your eyes twice",
-  //   "Turn your head slightly to the right, then left",
-  // ];
-
   const instructions = [
-    "Blink your eyes twice within 3 seconds",
+    "Blink twice within 3 seconds",
     "Turn your head slightly to the right, then left within 3 seconds",
   ];
 
@@ -87,74 +68,6 @@ const LivenessCheckCamera: React.FC<LivenessCheckCameraProps> = ({
     onLivenessCheckComplete(result.success);
     setIsProcessing(false);
   };
-
-  // const captureVideo = async (): Promise<string[]> => {
-  //   console.log("Started photo capture sequence");
-  //   if (cameraRef.current) {
-  //     try {
-  //       const frames: string[] = [];
-  //       for (let i = 0; i < 2; i++) {
-  //         // Capture 10 frames
-  //         const photo = await cameraRef.current.takePictureAsync({
-  //           quality: 0.2,
-  //           base64: true,
-  //           skipProcessing: true,
-  //         });
-
-  //         // Compress the image
-  //         if (photo) {
-  //           const manipResult = await manipulateAsync(
-  //             photo.uri,
-  //             [{ resize: { width: 640 } }],
-  //             { compress: 0.5, format: SaveFormat.JPEG, base64: true }
-  //           );
-
-  //           frames.push(manipResult.base64 || "");
-  //           // await new Promise((resolve) => setTimeout(resolve, 100)); // Wait 300ms between frames
-  //         }
-  //       }
-  //       console.log("Photo sequence captured:", frames.length, "frames");
-  //       return frames;
-  //     } catch (error) {
-  //       console.error("Error in photo capture sequence:", error);
-  //       throw error;
-  //     }
-  //   } else {
-  //     console.error("Camera ref is null");
-  //     throw new Error("Camera is not ready");
-  //   }
-  // };
-
-  // const performStep = async () => {
-  //   if (isProcessing) return;
-
-  //   setIsProcessing(true);
-  //   setMessage("Capturing... Please perform the action.");
-
-  //   try {
-  //     const frames = await captureVideo();
-  //     if (frames.length > 0) {
-  //       console.log("Frames to send:", frames.length);
-  //       if (currentStep === 0) {
-  //         socket?.emit("check_blinks", { frames });
-  //       } else {
-  //         socket?.emit("check_head_movement", { frames });
-  //       }
-  //       setMessage("Processing... Please wait.");
-  //     } else {
-  //       throw new Error("No frames captured");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error in performStep:", error);
-  //     if (error instanceof Error) {
-  //       setMessage(`Error: ${error.message}. Please try again.`);
-  //     } else {
-  //       setMessage("An unknown error occurred. Please try again.");
-  //     }
-  //   } finally {
-  //     setIsProcessing(false);
-  //   }
-  // };
 
   const captureImages = async (): Promise<string[]> => {
     console.log("Started image capture sequence");
@@ -237,10 +150,6 @@ const LivenessCheckCamera: React.FC<LivenessCheckCameraProps> = ({
       setIsProcessing(false);
     }
   };
-
-  // useEffect(() => {
-  //   console.log("frames:", frames);
-  // }, [frames]);
 
   if (!permission) {
     return <View />;

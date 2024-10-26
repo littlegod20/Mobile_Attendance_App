@@ -13,7 +13,6 @@ import { ThemedView } from "../../contexts/ThemedView";
 import { ThemedText } from "../../contexts/ThemedText";
 import CustomDropDown from "../../components/CustomDropDown";
 import CenterTabBar from "../../components/CenterTab";
-import { Octicons } from "@expo/vector-icons";
 import fetchWithAuth from "../../services/fetchWithAuth";
 import { API_URL } from "@env";
 import * as SecureStore from "expo-secure-store";
