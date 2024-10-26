@@ -1,6 +1,5 @@
 import {
   View,
-  Text,
   ScrollView,
   Dimensions,
   Animated,
@@ -8,10 +7,7 @@ import {
   Image,
 } from "react-native";
 import { ThemedView } from "../../contexts/ThemedView";
-import GoBackBtn from "../../components/GoBackBtn";
 import { ThemedText } from "../../contexts/ThemedText";
-import { Avatar } from "react-native-paper";
-import { darkTheme } from "../../themes/themes";
 import { useState, useRef, useEffect } from "react";
 import CenterTabBar from "../../components/CenterTab";
 import DetailForm from "../../components/DetailForm";

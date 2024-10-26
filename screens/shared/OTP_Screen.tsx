@@ -1,15 +1,7 @@
-import {
-  View,
-  Text,
-  ImageBackground,
-  TextInput,
-  StyleSheet,
-  Alert,
-} from "react-native";
+import { View, ImageBackground } from "react-native";
 import React from "react";
 import { ThemedView } from "../../contexts/ThemedView";
 import { ThemedText } from "../../contexts/ThemedText";
-import CustomInput from "../../components/Input";
 import OTPInput from "../../components/OTPInput";
 import Button from "../../components/Button";
 import { Link, router } from "expo-router";

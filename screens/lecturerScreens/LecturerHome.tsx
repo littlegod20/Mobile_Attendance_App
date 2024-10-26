@@ -10,11 +10,9 @@ import {
   TextInput,
   Image,
 } from "react-native";
-import { Avatar } from "react-native-paper";
 import { ThemedText } from "../../contexts/ThemedText";
 import Button from "../../components/Button";
 import { router, useFocusEffect } from "expo-router";
-import { darkTheme } from "../../themes/themes";
 import { ThemedView } from "../../contexts/ThemedView";
 import RecentCard from "../../components/RecentsCard";
 import { FlatList } from "react-native";
@@ -30,7 +28,6 @@ import { useCourseSession } from "../../contexts/CoursesSessionContext";
 import CarouselWithPagination from "../../components/AttendanceProgress";
 import { CarouselProps, User } from "../../utils/types";
 import DropDownPicker from "react-native-dropdown-picker";
-import GoBackBtn from "../../components/GoBackBtn";
 
 export default function LecturerHome() {
   const { courses, setCourses } = useCourseSession();
