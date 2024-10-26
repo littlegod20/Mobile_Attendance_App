@@ -62,57 +62,6 @@ const Check_AttendanceScreen = () => {
     fetchUserData();
   }, []);
 
-  // useEffect(() => {
-  //   // initializing socket connectionz
-  //   const API_URL = "http://192.168.8.131:8000";
-
-  //   const newSocket = io(API_URL, {
-  //     transports: ["websocket"],
-  //     upgrade: false,
-  //     forceNew: true,
-  //     reconnection: true,
-  //     reconnectionAttempts: 5,
-  //     reconnectionDelay: 1000,
-  //   });
-  //   newSocket.on("connect", () => {
-  //     console.log("WebSocket connected:", newSocket.id);
-  //     setSocketStatus("Connected");
-  //   });
-
-  //   newSocket.on("disconnect", (reason) => {
-  //     console.log("WebSocket disconnected:", reason);
-  //     setSocketStatus("Disconnected");
-  //   });
-
-  //   newSocket.on("connect_error", (error) => {
-  //     console.log("Connection error:", error);
-  //     setSocketStatus("Error: " + error.message);
-  //   });
-
-  //   //test adding listener for 'pong' event
-  //   newSocket.on("customPong", (data) => {
-  //     console.log("Recieved customPong from server:", data);
-  //     setSocketStatus("Received customPong: " + JSON.stringify(data));
-  //   });
-
-  //   setSocket(newSocket);
-
-  //   return () => {
-  //     if (newSocket) newSocket.disconnect();
-  //   };
-  // }, []);
-
-  // const testSocketConnection = () => {
-  //   if (socket && socket.connected) {
-  //     console.log("Sending ping to server");
-  //     socket.emit("customPing", { message: "customPing from client!" });
-  //     setSocketStatus("customPing sent");
-  //   } else {
-  //     console.log("Socket not connected");
-  //     setSocketStatus("Socket not connected");
-  //   }
-  // };
-
   // getting location of student
   // useEffect(() => {
   //   const geo = async () => {
