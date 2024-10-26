@@ -9,6 +9,7 @@ type ButtonComponentProps = {
   title: string;
   onPress: any;
   customStyle?: object;
+  disabled?: boolean;
 };
 
 const Button = ({
@@ -17,6 +18,7 @@ const Button = ({
   title,
   onPress,
   customStyle,
+  disabled,
   ...rest
 }: ButtonComponentProps) => {
   const bgcolor = useThemeColor(
@@ -39,6 +41,7 @@ const Button = ({
           justifyContent: "center",
           alignItems: "center",
           borderRadius: 12,
+          opacity: disabled ? 0.5 : 1,
         },
         customStyle,
       ]}

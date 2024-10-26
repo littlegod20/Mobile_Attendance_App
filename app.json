@@ -1,20 +1,20 @@
 {
   "expo": {
-    "name": "attendance_checking",
-    "slug": "attendance_checking",
+    "name": "RollCall",
+    "slug": "roll-call",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/rollcall.png",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/square_splash.png",
       "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
       "splash": {
-        "image": "./assets/images/splash.png",
+        "image": "./assets/square_splash.png",
         "resizeMode": "cover",
         "backgroundColor": "#ffffff"
       },
@@ -25,19 +25,23 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/splash.png",
+        "foregroundImage": "./assets/square_splash.png",
         "backgroundColor": "#ffffff"
       },
       "splash": {
-        "image": "./assets/images/splash.png",
+        "image": "./assets/square_splash.png",
         "resizeMode": "cover",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
-      "favicon": "/assets/images/favicon.pngy"
+      "favicon": "/assets/images/favicon.png"
     },
     "assetBundlePatterns": ["**/*"],
     "plugins": [
@@ -51,7 +55,8 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": true
         }
-      ]
+      ],
+      "expo-video"
     ],
     "scheme": "attendance-checker",
     "runtimeVersion": "1.0.0"

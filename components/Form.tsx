@@ -67,24 +67,24 @@ const CustomForm: React.FC<CustomFormProps> = ({
   };
 
   return (
-    <View className="flex-1 justify-start mt-5 px-[20px] w-full">
-      <View className="mb-12 w-full">
-        {inputs.map((input) => (
-          <View key={input.name as string} className="mb-1">
-            <ThemedText type="defaultSemiBold" className="mb-2 capitalize">
-              {input.name}:
-            </ThemedText>
-            <CustomInput
-              placeholder={input.placeholder}
-              value={getInputValue(input.name)}
-              onChangeText={(value) => handleInputChange(input.name, value)}
-              keyboardType={input.keyboardType}
-              secureTextEntry={input.secureTextEntry}
-              multiline={input.multiline}
-            />
-          </View>
-        ))}
-      </View>
+    // <View className="flex-1 justify-start mt-5 px-[20px] w-full ">
+    //   <View className=" w-full bg-yellow-500">
+    <>
+      {inputs.map((input) => (
+        <View key={input.name as string} className="mb-1">
+          <ThemedText type="defaultSemiBold" className="mb-2 capitalize">
+            {input.name}:
+          </ThemedText>
+          <CustomInput
+            placeholder={input.placeholder}
+            value={getInputValue(input.name)}
+            onChangeText={(value) => handleInputChange(input.name, value)}
+            keyboardType={input.keyboardType}
+            secureTextEntry={input.secureTextEntry}
+            multiline={input.multiline}
+          />
+        </View>
+      ))}
       <View>
         <Button title={buttonTitle} onPress={handleSubmit} />
         <ThemedText type="smalldefault" className="mt-2 text-center">
@@ -98,7 +98,9 @@ const CustomForm: React.FC<CustomFormProps> = ({
           ) : null}
         </ThemedText>
       </View>
-    </View>
+    </>
+    //   </View>
+    // </View>
   );
 };
 

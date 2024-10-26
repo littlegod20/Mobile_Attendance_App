@@ -115,7 +115,7 @@ export default function Profile() {
       <View className="w-full mb-8 flex flex-row p-4 items-center ">
         <Avatar.Image
           size={60}
-          source={require("../../assets/images/icon.png")}
+          source={require("../../assets/rollcall.png")}
           theme={darkTheme}
         />
         <View className="flex  ml-3">

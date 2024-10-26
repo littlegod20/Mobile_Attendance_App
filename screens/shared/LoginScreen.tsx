@@ -101,10 +101,10 @@ const LogIn = () => {
     <ThemedView className="flex-1">
       <ImageBackground
         source={require("../../assets/images/screen_deco.png")}
-        className="flex-1 w-full  justify-center items-center"
+        className="flex-1 w-full flex-col justify-center"
       >
         {loading === false ? (
-          <>
+          <ThemedView className="flex-1">
             <View className="h-1/4 p-[20px] flex flex-col justify-end  items-start w-full">
               <ThemedText type="title">Log in to your account</ThemedText>
               <ThemedText type="smalldefault" className="text-gray-300">
@@ -123,7 +123,7 @@ const LogIn = () => {
                 link_path="shared_screens/sign_up"
               />
             </KeyboardAvoidanceContainer>
-          </>
+          </ThemedView>
         ) : (
           <View className="flex-1 flex justify-center items-center">
             <ActivityIndicator size="large" color="#A66d37" />

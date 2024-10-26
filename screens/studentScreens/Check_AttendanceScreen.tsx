@@ -30,6 +30,8 @@ import {
 } from "expo-camera";
 import Button from "../../components/Button";
 import AttendanceCamera from "../../components/AttendanceCamera";
+import LivenessCheckCamera from "./components/LivenessCheckCamera";
+import LivenessDetection from "./components/DummyLiveness";
 
 interface CourseSessionProps {
   course_name: string;
@@ -45,56 +47,72 @@ const Check_AttendanceScreen = () => {
   const [error, setError] = useState<Error | null>(null);
   // const [location, setLocation] = useState<LocationCoords>(null);
   // const [locationLoading, setLocationLoading] = useState(true);
-  const [isLivenessCheckActive, setIsLivenessCheckActive] = useState(false);
-  const socketRef = useRef(null);
   const [showCamera, setShowCamera] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<CourseData | null>(null);
   const [capturedImage, setCapturedImage] =
     useState<CameraCapturedPicture | null>(null);
   const [isAttendanceLoading, setIsAttendanceLoading] =
     useState<boolean>(false);
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [isLivenessCheckActive, setIsLivenessCheckActive] = useState(false);
+  const [isLivenessCheckPassed, setIsLivenessCheckPassed] = useState(false);
+  const [socketStatus, setSocketStatus] = useState("Disconnected");
 
   useEffect(() => {
     fetchUserData();
   }, []);
 
   // useEffect(() => {
-  //   if (isLivenessCheckActive) {
-  //     socketRef.current = io(`ws://${API_URL}/socket.io`);
-  //     socketRef.current.on("liveness_result", handleLivenessResult);
+  //   // initializing socket connectionz
+  //   const API_URL = "http://192.168.8.131:8000";
 
-  //     return () => {
-  //       socketRef.current.off("liveness_result", handleLivenessResult);
-  //       socketRef.current.disconnect();
-  //     };
-  //   }
-  // }, [isLivenessCheckActive]);
+  //   const newSocket = io(API_URL, {
+  //     transports: ["websocket"],
+  //     upgrade: false,
+  //     forceNew: true,
+  //     reconnection: true,
+  //     reconnectionAttempts: 5,
+  //     reconnectionDelay: 1000,
+  //   });
+  //   newSocket.on("connect", () => {
+  //     console.log("WebSocket connected:", newSocket.id);
+  //     setSocketStatus("Connected");
+  //   });
 
-  // const startLivenessCheck = async () => {
-  //   setIsLivenessCheckActive(true);
-  //   sendFrames();
-  // };
+  //   newSocket.on("disconnect", (reason) => {
+  //     console.log("WebSocket disconnected:", reason);
+  //     setSocketStatus("Disconnected");
+  //   });
 
-  // const sendFrames = async () => {
-  //   if (cameraRef.current && isLivenessCheckActive) {
-  //     const photo = await cameraRef.current.takePictureAsync({ base64: true });
-  //     socketRef.current.emit("liveness_check", { image: photo.base64 });
+  //   newSocket.on("connect_error", (error) => {
+  //     console.log("Connection error:", error);
+  //     setSocketStatus("Error: " + error.message);
+  //   });
 
-  //     // Send frames every 500ms
-  //     setTimeout(sendFrames, 500);
-  //   }
-  // };
+  //   //test adding listener for 'pong' event
+  //   newSocket.on("customPong", (data) => {
+  //     console.log("Recieved customPong from server:", data);
+  //     setSocketStatus("Received customPong: " + JSON.stringify(data));
+  //   });
 
-  // const handleLivenessResult = (result) => {
-  //   if (result.success) {
-  //     setIsLivenessCheckActive(false);
-  //     // Proceed with attendance checking
-  //     checkAttendance();
+  //   setSocket(newSocket);
+
+  //   return () => {
+  //     if (newSocket) newSocket.disconnect();
+  //   };
+  // }, []);
+
+  // const testSocketConnection = () => {
+  //   if (socket && socket.connected) {
+  //     console.log("Sending ping to server");
+  //     socket.emit("customPing", { message: "customPing from client!" });
+  //     setSocketStatus("customPing sent");
   //   } else {
-  //     Alert.alert("Liveness Check Failed", result.message);
-  //     setIsLivenessCheckActive(false);
+  //     console.log("Socket not connected");
+  //     setSocketStatus("Socket not connected");
   //   }
   // };
+
   // getting location of student
   // useEffect(() => {
   //   const geo = async () => {
@@ -199,7 +217,27 @@ const Check_AttendanceScreen = () => {
 
   const handleCardClick = (course_name: string, course_code: string) => {
     setSelectedCourse({ course_name, course_code });
+    setIsLivenessCheckActive(true);
+    setIsLivenessCheckPassed(false);
     setShowCamera(true);
+  };
+
+  const handleLivenessCheckComplete = (success: boolean) => {
+    setIsLivenessCheckActive(false);
+    setIsLivenessCheckPassed(success);
+    if (success) {
+      // Proceed to capture the final image for attendance
+      setShowCamera(true);
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Liveness Check Failed",
+        text2: "Please try again",
+        position: "top",
+        visibilityTime: 3000,
+      });
+      setShowCamera(false);
+    }
   };
 
   const handleCapture = (image: CameraCapturedPicture | null) => {
@@ -207,6 +245,7 @@ const Check_AttendanceScreen = () => {
     setShowCamera(false);
     setIsAttendanceLoading(true);
     // Now you can use the captured image and selected course data
+    //  && isLivenessCheckPassed && image
     if (selectedCourse) {
       checkAttendance(
         selectedCourse.course_code,
@@ -215,6 +254,15 @@ const Check_AttendanceScreen = () => {
         attendance_checked,
         location
       );
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Attendance Check Failed",
+        text2: "Please try again",
+        position: "top",
+        visibilityTime: 3000,
+      });
+      setIsAttendanceLoading(false);
     }
   };
 
@@ -258,6 +306,7 @@ const Check_AttendanceScreen = () => {
         );
       }
 
+      console.log(data.msg);
       if (data.msg === "Attendance recorded successfully.") {
         Toast.show({
           type: "success",
@@ -355,16 +404,27 @@ const Check_AttendanceScreen = () => {
         source={require("../../assets/images/screen_deco.png")}
         className="flex-1 w-full items-center"
       >
-        {showCamera === false && (
+        {!showCamera && (
           <View className="h-1/6 flex justify-end items-center w-full mb-8">
             <GoBackBtn path={"/student/Main/(tabs)"} />
           </View>
         )}
 
         <View className="w-full flex-1 flex items-center gap-7 p-2">
-          {/* || locationLoading */}
           {showCamera ? (
-            <AttendanceCamera onCapture={handleCapture} />
+            isLivenessCheckActive ? (
+              <LivenessDetection />
+            ) : (
+              // <LivenessCheckCamera
+              //   socket={socket}
+              //   onLivenessCheckComplete={handleLivenessCheckComplete}
+              // />
+              // <ThemedView className="w-full flex-1">
+              //   <VideoRecorder />
+              // </ThemedView>
+              // <ThemedText>Hello</ThemedText>
+              <AttendanceCamera onCapture={handleCapture} />
+            )
           ) : (
             <>
               {courseSession.length > 0 ? (
@@ -397,6 +457,11 @@ const Check_AttendanceScreen = () => {
             </>
           )}
         </View>
+        {/* <Button title="Test Socket Connection" onPress={testSocketConnection} />
+        <ThemedText>Socket Status: {socketStatus}</ThemedText> */}
+        <ThemedText>
+          Location: {location?.latitude}, {location?.longitude}
+        </ThemedText>
       </ImageBackground>
     </ThemedView>
   );

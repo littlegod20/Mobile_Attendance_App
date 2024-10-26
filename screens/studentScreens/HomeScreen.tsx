@@ -26,6 +26,7 @@ import fetchWithAuth from "../../services/fetchWithAuth";
 import { CarouselProps, User } from "../../utils/types";
 import CarouselWithPagination from "../../components/AttendanceProgress";
 import { fetchAttendanceData } from "../../services/attendanceService";
+import GoBackBtn from "../../components/GoBackBtn";
 
 export type Course = {
   course_name: string;
@@ -150,10 +151,13 @@ const Home: React.FC = () => {
 
   return (
     <ThemedView className="flex flex-1 items-center justify-start">
+      {/* <View className="h-1/6 flex justify-end items-center w-full mb-8">
+        <GoBackBtn path={"shared_screens/log_in"} />
+      </View> */}
       <View className=" h-[10%] w-11/12 flex-row items-center justify-start">
         <Avatar.Image
           size={55}
-          source={require("../../assets/images/icon.png")}
+          source={require("../../assets/rollcall.png")}
           theme={darkTheme}
         />
         <View className="ml-3">

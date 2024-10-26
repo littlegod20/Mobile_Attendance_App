@@ -18,22 +18,21 @@ const KeyboardAvoidanceContainer: React.FC<KeyboardAvoidanceContainerProps> = ({
   children,
 }) => {
   return (
-    <SafeAreaView className="flex-1 w-full">
+    <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
-        className="flex-1 w-full "
+        style={styles.keyboardAvoiding}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={10}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
       >
         <TouchableWithoutFeedback
           onPress={Keyboard.dismiss}
           accessible={false}
-          style={{ flex: 1, backgroundColor: "pink", width: "100%" }}
+          style={{ flex: 1, width: "100%" }}
         >
           <ScrollView
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
-            // style={styles.contentContainer}
-            className="flex-1 w-full"
+            contentContainerStyle={styles.scrollView}
           >
             {children}
           </ScrollView>
@@ -43,13 +42,19 @@ const KeyboardAvoidanceContainer: React.FC<KeyboardAvoidanceContainerProps> = ({
   );
 };
 
-// const styles = StyleSheet.create({
-//   contentContainer: {
-//     paddingTop:
-//       Platform.OS === "android" && StatusBar.currentHeight
-//         ? StatusBar.currentHeight + 10
-//         : 10,
-//   },
-// });
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    width: "100%",
+  },
+  keyboardAvoiding: {
+    flex: 1,
+    width: "100%",
+    padding: 20,
+  },
+  scrollView: {
+    flexGrow: 1,
+  },
+});
 
 export default KeyboardAvoidanceContainer;
